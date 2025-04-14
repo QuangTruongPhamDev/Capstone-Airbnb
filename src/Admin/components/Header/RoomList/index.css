@@ -1,0 +1,112 @@
+.roomlist-body {
+    display: flex;
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+
+  .roomlist-main {
+    flex-grow: 1;
+    padding: 30px;
+    background-color: #f9f9f9;
+  }
+  
+  .roomlist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .roomlist-h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .roomlist-btn-add {
+    padding: 8px 16px;
+    background-color: #1890ff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .roomlist-btn-add:hover {
+    background-color: #1677cc;
+  }
+
+  .roomlist-form .roomlist-input {
+    border-radius: none;
+  }
+
+  .roomlist-form .roomlist-btn {
+    padding: 8px 16px;
+    background-color: #1890ff;
+    cursor: pointer;
+    border: none;
+    color: white;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+  
+  .roomlist-logout {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .roomlist-avatar {
+    background-color: #f8c291;
+    color: black;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+  
+  .roomlist-search-box {
+    margin-top: 20px;
+    padding: 10px;
+    width: 300px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .roomlist-room-table {
+    margin-top: 20px;
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+  }
+  
+  .roomlist-room-table .roomlist-th, .roomlist-room-table .roomlist-td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+  
+  .roomlist-btn-edit,
+  .roomlist-btn-delete {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .roomlist-btn-edit .roomlist-i {
+    color: #2ecc71;
+  }
+  
+  .roomlist-btn-delete .roomlist-i {
+    color: #e74c3c;
+  }
+
+  .roomlist-pagination {
+    display: flex;
+    justify-content: center;
+    align-items:center
+  }

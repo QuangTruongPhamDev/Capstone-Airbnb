@@ -1,0 +1,91 @@
+.locationlist-body {
+    padding: 30px;
+    background-color: #f4f6f8;
+  }
+  
+  .locationlist-main-content {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+  }
+  
+  .locationlist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .locationlist-h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .locationlist-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .locationlist-avatar {
+    background-color: #f8c291;
+    color: black;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+  
+  .locationlist-btn-add {
+    background-color: #1890ff;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .locationlist-btn-add:hover {
+    background-color: #1677cc;
+  }
+  
+  .locationlist-search-box {
+    width: 100%;
+    padding: 8px;
+    margin: 16px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+  
+  .locationlist-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .locationlist-table th,
+  .locationlist-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+  }
+  
+  .locationlist-table th {
+    background-color: #f0f0f0;
+  }
+
+  .locationlist-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .locationlist-btn-edit .locationlist-i {
+    color: #2ecc71;
+  }
+  
+  .locationlist-btn-delete .locationlist-i {
+    color: #e74c3c;
+  }
