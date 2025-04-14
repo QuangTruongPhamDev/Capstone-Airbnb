@@ -1,0 +1,38 @@
+.sidebar-body {
+    display: flex;
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  .sidebar-sidebar {
+    background-color: #081c34;
+    color: white;
+    width: 200px;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  .sidebar-sidebar .sidebar-h2 {
+    color: #f8c106;
+    font-size: 24px;
+    margin-bottom: 30px;
+  }
+  
+  .sidebar-sidebar .sidebar-ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .sidebar-sidebar .sidebar-ul .sidebar-li {
+    margin-bottom: 20px;
+  }
+  
+  .sidebar-sidebar .sidebar-ul .sidebar-li .sidebar-span {
+    color: white;
+    text-decoration: none;
+  }
+  
+  .sidebar-sidebar .sidebar-ul .sidebar-li.active .sidebar-span {
+    font-weight: bold;
+    color: #f8c106;
+  }
