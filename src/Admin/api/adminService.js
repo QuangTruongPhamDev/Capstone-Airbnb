@@ -23,12 +23,12 @@ export const addroomService = async (form) => {
         {
           headers: {
             tokenCybersoft: CYBER_TOKERN,
-            token: `Bearer ${JSON.parse(localStorage.getItem("USER")).token}`
+            token: `${JSON.parse(localStorage.getItem("USER")).token}`
           },
         }
       );
   
-      return response.data; // <- trả dữ liệu về để thêm vào setRooms
+      return response.data.content; // <- trả dữ liệu về để thêm vào setRooms
     } catch (err) {
       console.log("Lỗi khi thêm phòng:", err.response?.data || err.message);
       throw err;
@@ -44,7 +44,7 @@ export const updateRoomService = (id, form) => {
       {
         headers: {
           tokenCybersoft: CYBER_TOKERN,
-          token: `Bearer ${userInfo?.token}`,
+          token: `${JSON.parse(localStorage.getItem("USER")).token}`,
         },
       }
     );
@@ -62,7 +62,7 @@ export const deleteRoomService = (id) => {
   
     return https.delete(url, {
       headers: {
-        token: `Bearer ${userInfo.token}`,
+        token: `${userInfo.token}`,
         tokenCybersoft: CYBER_TOKERN, // thay CYBERSOFT_TOKEN bằng token thật của bạn
       },
     });

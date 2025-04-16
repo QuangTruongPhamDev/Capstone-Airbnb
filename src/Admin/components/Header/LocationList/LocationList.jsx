@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./index.css";
 import { addLocationService, deleteLocationService, getLocationService, updateLocationService } from "../../../api/locationService";
+import { Link } from "react-router-dom";
 
 export default function LocationList() {
     const [locations, setLocations] = useState([]);
@@ -100,7 +101,9 @@ export default function LocationList() {
             <h1 className="locationlist-h1">Quản Lý Vị Trí</h1>
             <div className="locationlist-section">
               <div className="locationlist-avatar">A</div>
-              <a href="">Đăng xuất</a>
+              <Link to="/">
+              <span href="">Đăng xuất</span>
+              </Link>
             </div>
           </div>
   

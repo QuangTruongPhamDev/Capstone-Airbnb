@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./index.css";
 import { getReservationService } from "../../../api/reservationService";
+import { Link } from "react-router-dom";
 export default function ReservationList() {
   const [reservations, setReservations] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -42,7 +43,9 @@ export default function ReservationList() {
           <h1 className="reservation-title">Quản Lý Đặt Phòng</h1>
           <div className="reservation-user-section">
             <div className="reservation-avatar">A</div>
-            <a href="#">Đăng xuất</a>
+            <Link to="/">
+            <span href="#">Đăng xuất</span>
+            </Link>
           </div>
         </div>
 

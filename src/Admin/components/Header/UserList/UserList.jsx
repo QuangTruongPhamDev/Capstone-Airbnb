@@ -4,6 +4,7 @@ import { getUserService } from "../../../api/userService";
 import axios from "axios";
 import { toast } from "react-toastify";
 import {CYBER_TOKERN} from '../../../api/config';
+import { Link } from "react-router-dom";
 
 
 
@@ -66,7 +67,9 @@ export default function UserList() {
             <h1 className="userlist-h1">Quản lý Người dùng</h1>
             <div className="userlist-user-section">
               <div className="userlist-avatar">A</div>
-              <a href="#">Đăng xuất</a>
+              <Link to="/">
+              <span href="#">Đăng xuất</span>
+              </Link>
             </div>
           </div>
   

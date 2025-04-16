@@ -19,10 +19,10 @@ export const https = axios.create({
   baseURL: BASE_URL,
   headers: {
     tokenCybersoft: CYBER_TOKEN,
-    token: userInfo ? `Bearer ${userInfo.accessToken}` : "",
+    token: userInfo ? `${userInfo.token}` : "",
   },
 });
 
 export const updateAuthToken = (token) => {
-  https.defaults.headers["token"] = `Bearer ${token}`;
+  https.defaults.headers["token"] = `${token}`;
 };
