@@ -6,15 +6,8 @@ export const CYBER_TOKERN =
 export const https = axios.create({
     baseURL: "https://airbnbnew.cybersoft.edu.vn",
     headers: {
-      TokenCybersoft: CYBER_TOKERN,
+        tokenCybersoft: CYBER_TOKERN,
     },
   });
 
-  https.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token"); // hoặc từ redux
-    if (token) {
-      config.headers.token = `${token}`;
-    }
-    return config;
-  });
   
