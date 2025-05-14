@@ -13,9 +13,23 @@
   }
   
   .sidebar-sidebar .sidebar-h2 {
-    color: #f8c106;
+    color: #eb4562;
     font-size: 24px;
+    font-weight: 600;
+  }
+
+  .sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 4px; /* khoảng cách giữa icon và chữ */
+    font-family: Arial, sans-serif;
     margin-bottom: 30px;
+  }
+  .sidebar-icon {
+    width: 24px;
+    height: auto;
+    font-size: 25px;
+    color: #eb4562;
   }
   
   .sidebar-sidebar .sidebar-ul {

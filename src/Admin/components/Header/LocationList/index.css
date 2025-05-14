@@ -51,6 +51,20 @@
   .locationlist-btn-add:hover {
     background-color: #1677cc;
   }
+
+  .locationlist-form .locationlist-input {
+    border-radius: none;
+  }
+
+  .locationlist-form .locationlist-btn {
+    padding: 8px 16px;
+    background-color: #1890ff;
+    cursor: pointer;
+    border: none;
+    color: white;
+    border-radius: 6px;
+    font-size: 14px;
+  }
   
   .locationlist-search-box {
     width: 100%;
@@ -76,11 +90,6 @@
     background-color: #f0f0f0;
   }
 
-  .locationlist-pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
 
   .locationlist-btn-edit .locationlist-i {
     color: #2ecc71;
@@ -89,3 +98,26 @@
   .locationlist-btn-delete .locationlist-i {
     color: #e74c3c;
   }
+
+  .locationlist-pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    gap: 10px;
+  }
+
+  .locationlist-pagination .locationlist-button {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    background-color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .locationlist-pagination .locationlist-button.active {
+    background-color: #1890ff;
+    color: white;
+    border-color: #1890ff;
+  }
+

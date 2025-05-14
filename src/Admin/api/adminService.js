@@ -44,7 +44,7 @@ export const updateRoomService = (id, form) => {
       {
         headers: {
           tokenCybersoft: CYBER_TOKERN,
-          token: `${JSON.parse(localStorage.getItem("USER")).token}`,
+          token: `${userInfo.token}`,
         },
       }
     );
