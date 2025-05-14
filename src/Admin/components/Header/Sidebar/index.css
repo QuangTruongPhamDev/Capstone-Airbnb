@@ -21,7 +21,7 @@
   .sidebar-logo {
     display: flex;
     align-items: center;
-    gap: 4px; /* khoảng cách giữa icon và chữ */
+    gap: 5px; /* khoảng cách giữa icon và chữ */
     font-family: Arial, sans-serif;
     margin-bottom: 30px;
   }
