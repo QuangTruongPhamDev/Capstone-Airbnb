@@ -108,5 +108,21 @@
   .roomlist-pagination {
     display: flex;
     justify-content: center;
-    align-items:center
+    margin-top: 30px;
+    gap: 10px;
+  }
+
+  .roomlist-pagination .roomlist-button {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    background-color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .roomlist-pagination .roomlist-button.active {
+    background-color: #1890ff;
+    color: white;
+    border-color: #1890ff;
   }

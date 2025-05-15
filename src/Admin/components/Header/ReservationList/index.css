@@ -56,6 +56,20 @@
   .reservation-btn-add:hover {
     background-color: #1677cc;
   }
+
+  .reservation-form .reservation-input {
+    border-radius: none;
+  }
+
+  .reservation-form .reservation-btn {
+    padding: 8px 16px;
+    background-color: #1890ff;
+    cursor: pointer;
+    border: none;
+    color: white;
+    border-radius: 6px;
+    font-size: 14px;
+  }
   
   .reservation-search-box {
     width: 100%;

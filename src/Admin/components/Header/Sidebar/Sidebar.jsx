@@ -6,7 +6,10 @@ export default function Sidebar() {
   return (
     <div className="sidebar-body">
         <div className="sidebar-sidebar">
-        <h2 className="sidebar-h2">CYBERLEARN</h2>
+        <div className="sidebar-logo">
+            <i class="sidebar-icon fab fa-airbnb"></i>
+            <h2 className="sidebar-h2">airbnb</h2>
+        </div>
         <ul className="sidebar-ul">
             <Link to="/UserPage">
             <li className="sidebar-li">

@@ -97,3 +97,25 @@
   .userlist-a-delete .userlist-i {
     color: #e74c3c;
   }
+
+  .userlist-pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    gap: 10px;
+  }
+
+  .userlist-pagination .userlist-button {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    background-color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .userlist-pagination .userlist-button.active {
+    background-color: #1890ff;
+    color: white;
+    border-color: #1890ff;
+  }

@@ -181,17 +181,17 @@ export default function RoomList() {
           {filteredRoom.length === 0 && <p>Không tìm thấy phòng phù hợp.</p>}
   
           <div className="roomlist-pagination">
-            <button onClick={() => changePage(currentPage - 1)} disabled={currentPage === 1}>«</button>
+            <button onClick={() => changePage(currentPage - 1)} className="roomlist-button" disabled={currentPage === 1}>«</button>
             {Array.from({ length: totalPages }, (_, i) => (
               <button
                 key={i}
                 onClick={() => changePage(i + 1)}
-                className={currentPage === i + 1 ? "active" : ""}
+                className={`roomlist-button ${currentPage === i + 1 ? "active" : ""}`}
               >
                 {i + 1}
               </button>
             ))}
-            <button onClick={() => changePage(currentPage + 1)} disabled={currentPage === totalPages}>»</button>
+            <button onClick={() => changePage(currentPage + 1)} className="roomlist-button" disabled={currentPage === totalPages}>»</button>
           </div>
         </div>
       </div>
