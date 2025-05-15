@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./index.css"
 import { addroomService, deleteRoomService, getAdminService, updateRoomService } from "../../../api/adminService";
+import { Link } from "react-router-dom";
 
 export default function RoomList() {
     const [rooms, setRooms] = useState([]);
@@ -54,9 +55,9 @@ export default function RoomList() {
           .finally(() => setLoading(false));
       } else {
         addroomService(form)
-          .then((res) => {
+          .then((newRoom) => {
             alert("Thêm thành công");
-            setRooms((prev) => [...prev, res.data.content]);
+            setRooms((prev) => [...prev,newRoom]);
             resetForm();
           })
           .catch(() => alert("Lỗi khi thêm phòng"))
@@ -110,7 +111,9 @@ export default function RoomList() {
             <h1 className="roomlist-h1">Quản lý Phòng</h1>
             <div className="roomlist-logout">
               <span className="roomlist-avatar">A</span>
-              <a href="#">Đăng xuất</a>
+              <Link to="/">
+              <span href="#">Đăng xuất</span>
+              </Link>
             </div>
           </div>
   
@@ -178,17 +181,17 @@ export default function RoomList() {
           {filteredRoom.length === 0 && <p>Không tìm thấy phòng phù hợp.</p>}
   
           <div className="roomlist-pagination">
-            <button onClick={() => changePage(currentPage - 1)} disabled={currentPage === 1}>«</button>
+            <button onClick={() => changePage(currentPage - 1)} className="roomlist-button" disabled={currentPage === 1}>«</button>
             {Array.from({ length: totalPages }, (_, i) => (
               <button
                 key={i}
                 onClick={() => changePage(i + 1)}
-                className={currentPage === i + 1 ? "active" : ""}
+                className={`roomlist-button ${currentPage === i + 1 ? "active" : ""}`}
               >
                 {i + 1}
               </button>
             ))}
-            <button onClick={() => changePage(currentPage + 1)} disabled={currentPage === totalPages}>»</button>
+            <button onClick={() => changePage(currentPage + 1)} className="roomlist-button" disabled={currentPage === totalPages}>»</button>
           </div>
         </div>
       </div>

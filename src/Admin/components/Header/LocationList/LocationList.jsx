@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./index.css";
 import { addLocationService, deleteLocationService, getLocationService, updateLocationService } from "../../../api/locationService";
+import { Link } from "react-router-dom";
 
 export default function LocationList() {
     const [locations, setLocations] = useState([]);
@@ -16,19 +17,30 @@ export default function LocationList() {
       tinhThanh: "",
       quocGia: "",
     });
-  
+    const [loading, setLoading] = useState(false);
+
+    // Lấy danh sách vị trí từ API
     useEffect(() => {
+      setLoading(true);
       getLocationService()
-        .then((res) => setLocations(res.data.content))
-        .catch((err) => console.error("Lỗi khi tải vị trí:", err));
+        .then((res) => {
+          setLocations(res.data.content);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error("Lỗi khi tải vị trí:", err);
+          setLoading(false);
+        });
     }, []);
-  
+
     const handleChange = (e) => {
       setForm({ ...form, [e.target.name]: e.target.value });
     };
-  
+
     const handleSubmit = (e) => {
       e.preventDefault();
+      setLoading(true);
+
       if (isEditing) {
         updateLocationService(editingLocationId, form)
           .then(() => {
@@ -40,25 +52,29 @@ export default function LocationList() {
             );
             resetForm();
           })
-          .catch(() => alert("Lỗi khi cập nhật vị trí"));
+          .catch(() => alert("Lỗi khi cập nhật vị trí"))
+          .finally(() => setLoading(false));
       } else {
         addLocationService(form)
-          .then((res) => {
+          .then((newLocation) => {
             alert("Thêm thành công");
-            setLocations((prev) => [...prev, res.data.content]);
+            setLocations((prev) => [...prev, newLocation]);
             resetForm();
           })
-          .catch(() => alert("Lỗi khi thêm vị trí"));
+          .catch(() => alert("Lỗi khi thêm vị trí"))
+          .finally(() => setLoading(false));
       }
     };
-  
+
     const resetForm = () => {
       setForm({ tenViTri: "", tinhThanh: "", quocGia: "" });
       setIsEditing(false);
       setEditingLocationId(null);
-      //setShowForm(false);
+      setSearchTerm("");
+      setCurrentPage(1);
+      setShowForm(false);
     };
-  
+
     const handleDelete = (id) => {
       if (window.confirm("Bạn có chắc muốn xóa vị trí này không?")) {
         deleteLocationService(id)
@@ -69,30 +85,28 @@ export default function LocationList() {
           .catch(() => alert("Lỗi khi xóa vị trí"));
       }
     };
-  
+
     const handleEdit = (loc) => {
       setForm(loc);
       setIsEditing(true);
       setEditingLocationId(loc.id);
       setShowForm(true);
     };
-  
+
     const filteredLocations = locations.filter((loc) =>
       loc.tenViTri.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  
+
     const totalPages = Math.max(1, Math.ceil(filteredLocations.length / itemsPerPage));
     const startIndex = (currentPage - 1) * itemsPerPage;
     const currentLocations = filteredLocations.slice(startIndex, startIndex + itemsPerPage);
-  
+
     const changePage = (newPage) => {
       if (newPage >= 1 && newPage <= totalPages) {
         setCurrentPage(newPage);
       }
     };
 
-
-  
     return (
       <div className="locationlist-body">
         <div className="locationlist-main-content">
@@ -100,22 +114,18 @@ export default function LocationList() {
             <h1 className="locationlist-h1">Quản Lý Vị Trí</h1>
             <div className="locationlist-section">
               <div className="locationlist-avatar">A</div>
-              <a href="">Đăng xuất</a>
+              <Link to="/">
+                <span href="#">Đăng xuất</span>
+              </Link>
             </div>
           </div>
-  
+
           <div className="locationlist-header">
-            <button
-              onClick={() => {
-                setShowForm(!showForm);
-                resetForm();
-              }}
-              className="locationlist-btn-add"
-            >
+            <button onClick={() => setShowForm(!showForm)} className="locationlist-btn-add">
               {showForm ? "Đóng" : "Thêm vị trí"}
             </button>
           </div>
-  
+
           {showForm && (
             <form onSubmit={handleSubmit} className="locationlist-form">
               <input
@@ -142,12 +152,12 @@ export default function LocationList() {
                 placeholder="Quốc gia"
                 required
               />
-              <button className="locationlist-btn" type="submit">
-                {isEditing ? "Cập nhật" : "Thêm mới"}
+              <button className="locationlist-btn" type="submit" disabled={loading}>
+                {loading ? "Đang xử lý..." : isEditing ? "Cập nhật" : "Thêm mới"}
               </button>
             </form>
           )}
-  
+
           <input
             type="text"
             placeholder="Tìm kiếm vị trí..."
@@ -155,59 +165,63 @@ export default function LocationList() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-  
-          <table className="locationlist-table">
-            <thead>
-              <tr>
-                <th>Mã vị trí</th>
-                <th>Tên vị trí</th>
-                <th>Tỉnh/Thành</th>
-                <th>Quốc gia</th>
-                <th>Hành động</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentLocations.map((loc) => (
-                <tr key={loc.id}>
-                  <td className="locationlist-td">{loc.id}</td>
-                  <td className="locationlist-td">{loc.tenViTri}</td>
-                  <td className="locationlist-td">{loc.tinhThanh}</td>
-                  <td className="locationlist-td">{loc.quocGia}</td>
-                  <td className="locationlist-td">
-                    <button className="locationlist-btn-edit" onClick={() => handleEdit(loc)}>
-                      <i className="locationlist-i fas fa-edit" />
-                    </button>
-                    <button className="locationlist-btn-delete" onClick={() => handleDelete(loc.id)}>
-                      <i className="locationlist-i fas fa-trash" />
-                    </button>
-                  </td>
+
+          {loading ? (
+            <p>Đang tải dữ liệu...</p>
+          ) : (
+            <table className="locationlist-table">
+              <thead>
+                <tr>
+                  <th>Mã vị trí</th>
+                  <th>Tên vị trí</th>
+                  <th>Tỉnh/Thành</th>
+                  <th>Quốc gia</th>
+                  <th>Hành động</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-  
+              </thead>
+              <tbody>
+                {currentLocations.map((loc) => (
+                  <tr key={loc.id}>
+                    <td className="locationlist-td">{loc.id}</td>
+                    <td className="locationlist-td">{loc.tenViTri}</td>
+                    <td className="locationlist-td">{loc.tinhThanh}</td>
+                    <td className="locationlist-td">{loc.quocGia}</td>
+                    <td className="locationlist-td">
+                      <button className="locationlist-btn-edit" onClick={() => handleEdit(loc)}>
+                        <i className="locationlist-i fas fa-edit" />
+                      </button>
+                      <button className="locationlist-btn-delete" onClick={() => handleDelete(loc.id)}>
+                        <i className="locationlist-i fas fa-trash" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+
           {filteredLocations.length === 0 && (
             <p>Không tìm thấy vị trí phù hợp.</p>
           )}
-  
+
           <div className="locationlist-pagination">
-            <button onClick={() => changePage(currentPage - 1)} disabled={currentPage === 1}>
+            <button onClick={() => changePage(currentPage - 1)} className="locationlist-button" disabled={currentPage === 1}>
               «
             </button>
             {Array.from({ length: totalPages }, (_, i) => (
               <button
                 key={i}
-                className={currentPage === i + 1 ? "active" : ""}
+                className={`locationlist-button ${currentPage === i + 1 ? "active" : ""}`}
                 onClick={() => changePage(i + 1)}
               >
                 {i + 1}
               </button>
             ))}
-            <button onClick={() => changePage(currentPage + 1)} disabled={currentPage === totalPages}>
+            <button onClick={() => changePage(currentPage + 1)} className="locationlist-button" disabled={currentPage === totalPages}>
               »
             </button>
           </div>
         </div>
       </div>
     );
-  }
+}

@@ -21,9 +21,9 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUserAction: (state, action) => {
-      state.user = action.payload;
+      state.user = action.payload.user;
       localStorage.setItem("USER", JSON.stringify(action.payload));
-      updateAuthToken(action.payload.accessToken); // cập nhật token axios
+      updateAuthToken(action.payload.token); // cập nhật token axios
     },
     logOutAction: (state) => {
       state.user = null;

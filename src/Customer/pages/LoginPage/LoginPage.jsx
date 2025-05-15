@@ -23,7 +23,10 @@ export default function LoginPage() {
         console.log("Token:", token);
 
         // Dispatch thông tin người dùng (tuỳ theo cấu trúc Redux, ở đây giả sử chỉ lưu user)
-        dispatch(setUserAction(user));
+        dispatch(setUserAction({
+          user,
+          token
+        }));
 
         // Điều hướng dựa vào role
         if (user.role?.toUpperCase() === "ADMIN") {
