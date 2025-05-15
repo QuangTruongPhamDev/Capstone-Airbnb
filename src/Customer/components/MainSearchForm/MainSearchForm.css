@@ -1,0 +1,40 @@
+.custom-rangepicker-center .ant-picker-input > input {
+  text-align: center !important;
+  font-size: inherit !important;
+  color: inherit !important;
+  background-color: transparent !important;
+  cursor: pointer;
+  padding: 0 !important;
+}
+
+.custom-rangepicker-center .ant-picker-input > input::placeholder {
+  color: inherit !important;
+  opacity: 1; /* Hoặc giá trị bạn muốn cho placeholder */
+}
+
+.custom-rangepicker-center .ant-picker-separator {
+  color: inherit !important; /* Để màu dấu gạch nối theo màu text chung */
+  padding: 0 2px !important; /* Khoảng cách cho dấu gạch nối */
+  align-self: center; /* Căn giữa dấu gạch nối */
+}
+
+/* Bỏ box-shadow khi RangePicker focus */
+.ant-picker.custom-rangepicker-center.ant-picker-focused {
+  box-shadow: none !important;
+}
+
+/* Đảm bảo RangePicker và input container của nó căn giữa và chiếm đủ không gian */
+.custom-rangepicker-center.ant-picker {
+  width: 100% !important;
+  display: flex !important; /* Dùng flex để căn giữa nội dung bên trong */
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.custom-rangepicker-center .ant-picker-input {
+  width: auto !important; /* Để input container co giãn theo nội dung */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-grow: 1; /* Cho phép nó chiếm không gian */
+}

@@ -1,0 +1,19 @@
+.custom-detail-rangepicker.ant-picker {
+  border: none !important;
+  padding: 0 !important;
+  width: 100%;
+}
+.custom-detail-rangepicker .ant-picker-input {
+  padding: 0.6rem 0.75rem !important; /* Điều chỉnh padding cho input */
+  text-align: left !important;
+  flex: 1; /* Cho phép mỗi input chiếm không gian */
+}
+.custom-detail-rangepicker .ant-picker-input:first-child {
+  border-right: 1px solid #e5e7eb; /* Thêm đường kẻ phải cho ô ngày nhận */
+}
+.custom-detail-rangepicker .ant-picker-range-separator {
+  padding: 0 0.1rem !important; /* Giảm padding của separator */
+}
+.custom-detail-rangepicker .ant-picker-focused {
+  box-shadow: none !important;
+}

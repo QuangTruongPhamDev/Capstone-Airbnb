@@ -2,6 +2,7 @@ import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
+import "animate.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AdminPage from "./Admin/pages/AdminPage/AdminPage";
 import Template_admin from "./Admin/template_admin/template_admin";
@@ -13,6 +14,8 @@ import Template from "./Customer/template/Template";
 import HomePage from "./Customer/pages/HomePage/HomePage";
 import LoginPage from "./Customer/pages/LoginPage/LoginPage";
 import RegisterPage from "./Customer/pages/RegisterPage/RegisterPage";
+import RoomListPage from "./Customer/pages/RoomListPage/RoomListPage";
+import RoomDetailPage from "./Customer/pages/RoomDetail/RoomDetailPage";
 
 function App() {
   return (
@@ -28,6 +31,14 @@ function App() {
           <Route
             path="/dangky"
             element={<Template content={<RegisterPage />} />}
+          />
+          <Route
+            path="/rooms/:locationSlug" // Nhận locationSlug làm path param
+            element={<Template content={<RoomListPage />} />}
+          />
+          <Route
+            path="/room-detail/:roomId"
+            element={<Template content={<RoomDetailPage />} />}
           />
           <Route
             path="/UserPage"
