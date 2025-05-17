@@ -1,5 +1,14 @@
 import { StarFilled } from "@ant-design/icons";
-import { Avatar, Button, Divider, Form, Input, Pagination, Rate } from "antd";
+import {
+  Alert,
+  Avatar,
+  Button,
+  Divider,
+  Form,
+  Input,
+  Pagination,
+  Rate,
+} from "antd";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -10,7 +19,8 @@ export default function ReviewSection({ comments = [], reviewInfo, roomId }) {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const location = useLocation();
-  const { user: currentUser } = useSelector((state) => state.userSlice);
+  const userSlice = useSelector((state) => state.userSlice);
+  const currentUser = userSlice.user || null;
 
   const [submittingComment, setSubmittingComment] = useState(false);
   const [commentError, setCommentError] = useState(null);
@@ -52,13 +62,19 @@ export default function ReviewSection({ comments = [], reviewInfo, roomId }) {
     setCommentError(null);
 
     try {
-      await commentService.postComment({
+      const payload = {
+        id: 0,
         maPhong: parseInt(roomId),
-        maNguoiBinhLuan: currentUser.user.id,
+        maNguoiBinhLuan: currentUser.id,
         ngayBinhLuan: new Date().toISOString(),
-        noiDung: values.noiDung,
-        saoBinhLuan: values.saoBinhLuan,
-      });
+        noiDung: values.noiDung.trim(),
+        saoBinhLuan: Math.round(values.saoBinhLuan), // ✅ làm tròn để đảm bảo là integer
+      };
+
+      console.log("Payload gửi đi:", payload);
+
+      await commentService.postComment(payload);
+
       alert("Gửi bình luận thành công!");
       form.resetFields();
       fetchComments();
@@ -111,7 +127,7 @@ export default function ReviewSection({ comments = [], reviewInfo, roomId }) {
                   </p>
                 </div>
               </div>
-              {comment.saoBinhLuan && (
+              {typeof comment.saoBinhLuan === "number" && (
                 <Rate
                   disabled
                   defaultValue={comment.saoBinhLuan}
@@ -152,7 +168,7 @@ export default function ReviewSection({ comments = [], reviewInfo, roomId }) {
             label="Đánh giá của bạn"
             rules={[{ required: true, message: "Vui lòng chọn số sao!" }]}
           >
-            <Rate allowHalf defaultValue={0} />
+            <Rate allowHalf={false} defaultValue={0} />
           </Form.Item>
           <Form.Item
             name="noiDung"

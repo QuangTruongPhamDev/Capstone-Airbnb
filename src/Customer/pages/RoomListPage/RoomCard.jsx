@@ -146,7 +146,7 @@ export default function RoomCard({ room, isFavorite, onToggleFavorite }) {
 
   return (
     <Link
-      to={`/room-detail/${room.id}`}
+      to={`/room-detail/${room.maPhong || room.id}`}
       className="block group focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 rounded-xl"
       aria-label={`Xem chi tiết ${room.tenPhong || "phòng"}`}
     >
@@ -158,8 +158,7 @@ export default function RoomCard({ room, isFavorite, onToggleFavorite }) {
           onToggleFavorite={onToggleFavorite}
           roomId={room.id}
         />
-        <div className="p-3 sm:p-4 flex flex-col flex-grow">
-          {/* Bạn có thể thêm phần đánh giá (StarFilled) ở đây nếu API có dữ liệu */}
+        <div className="p-3 sm:p-4 flex flex-col flex-grow relative">
           <h3
             className="text-sm sm:text-base font-semibold text-gray-800 group-hover:text-red-500 transition-colors truncate mt-1"
             title={room.tenPhong}
@@ -175,14 +174,14 @@ export default function RoomCard({ room, isFavorite, onToggleFavorite }) {
               {amenities.join(" \u00B7 ")}
             </p>
           )}
-          <div className="mt-auto pt-2">
-            <p className="text-sm sm:text-base font-bold text-gray-900">
-              {typeof room.giaTien === "number"
-                ? `${room.giaTien.toLocaleString()} VNĐ`
-                : room.giaTien || "Liên hệ giá"}
-              <span className="text-xs font-normal text-gray-600"> / đêm</span>
-            </p>
-          </div>
+
+          {/* Giá rõ, to, góc phải dưới */}
+          <p className="absolute bottom-3 right-4 text-lg sm:text-xl font-bold text-red-600">
+            {typeof room.giaTien === "number"
+              ? `$${room.giaTien.toLocaleString()}`
+              : room.giaTien || "Contact for price"}
+            <span className="text-sm font-normal text-gray-500"> / đêm</span>
+          </p>
         </div>
       </div>
     </Link>

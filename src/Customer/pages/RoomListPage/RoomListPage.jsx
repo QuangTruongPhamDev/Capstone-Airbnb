@@ -8,6 +8,7 @@ import MapDisplayLeaflet from "../../components/Map/MapDisplayLeaflet";
 import MainSearchForm from "../../components/MainSearchForm/MainSearchForm";
 import FilterButtons from "../../components/FilterButtons/FilterButtons";
 import LocationHeroBanner from "../../components/Banner/LocationHeroBanner";
+import { motion } from "framer-motion";
 
 const unslugify = (slug) => {
   if (!slug) return "Địa điểm không xác định";
@@ -221,7 +222,7 @@ export default function RoomListPage() {
       )}
 
       {/* Thanh tìm kiếm phụ và các bộ lọc có thể đặt ở đây, bên trong một container */}
-      <div className="container mx-auto px-4 -mt-8 sm:-mt-10 md:-mt-12 relative z-10">
+      <div className="container mx-auto px-4 -mt-6 sm:-mt-6 md:-mt-8 relative z-10">
         <MainSearchForm />
         <div className="mt-4">
           {" "}
@@ -230,7 +231,7 @@ export default function RoomListPage() {
       </div>
 
       <div className="container mx-auto px-2 sm:px-4 lg:px-6 py-6">
-        <div className="mb-6 pt-20 md:pt-24">
+        <div className="mb-6 pt-5 md:pt-10">
           <p className="text-sm text-gray-600">
             {roomsData.total > 0
               ? `Tìm thấy ${roomsData.total} chỗ ở`
@@ -259,15 +260,21 @@ export default function RoomListPage() {
             {!loading && roomsData.list.length > 0 ? (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 md:gap-x-6 md:gap-y-8">
-                  {roomsData.list.map((room) => (
-                    <RoomCard
+                  {roomsData.list.map((room, index) => (
+                    <motion.div
                       key={room.id || room.maPhong}
-                      room={room}
-                      isFavorite={favoriteRoomIds.includes(
-                        room.id || room.maPhong
-                      )}
-                      onToggleFavorite={handleToggleFavorite}
-                    />
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1, duration: 0.4 }}
+                    >
+                      <RoomCard
+                        room={room}
+                        isFavorite={favoriteRoomIds.includes(
+                          room.id || room.maPhong
+                        )}
+                        onToggleFavorite={handleToggleFavorite}
+                      />
+                    </motion.div>
                   ))}
                 </div>
                 {roomsData.total > pageSize && (
@@ -295,10 +302,14 @@ export default function RoomListPage() {
             )}
           </div>
 
-          <div className="w-full lg:w-5/12 xl:w-1/3 h-[50vh] md:h-[60vh] lg:h-[calc(100vh-120px)] lg:sticky lg:top-[90px] rounded-xl overflow-hidden shadow-sm order-1 lg:order-2 bg-gray-200">
-            {/* Truyền locationInfo vào MapDisplayLeaflet */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="w-full lg:w-5/12 xl:w-1/3 h-[50vh] md:h-[60vh] lg:h-[calc(100vh-120px)] lg:sticky lg:top-[90px] rounded-xl overflow-hidden shadow-sm order-1 lg:order-2 bg-gray-200"
+          >
             <MapDisplayLeaflet locationInfo={locationInfo} />
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

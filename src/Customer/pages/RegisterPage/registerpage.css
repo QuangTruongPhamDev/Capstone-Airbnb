@@ -1,0 +1,33 @@
+.ant-btn-variant-solid {
+  color: #fff;
+  background-color: #ff385c;
+}
+
+:where(.css-dev-only-do-not-override-1d4w9r2).ant-btn-variant-solid:not(
+    :disabled
+  ):not(.ant-btn-disabled):hover {
+  background-color: #e0305b !important;
+  border-color: #e0305b !important;
+}
+
+:where(
+    .css-dev-only-do-not-override-1d4w9r2
+  ).ant-btn-color-link.ant-btn-variant-link {
+  color: #ff385c;
+  box-shadow: none;
+}
+
+:where(
+    .css-dev-only-do-not-override-1d4w9r2
+  ).ant-btn-color-link.ant-btn-variant-link:not(:disabled):not(
+    .ant-btn-disabled
+  ):hover {
+  color: #e0305b;
+}
+
+:where(.css-dev-only-do-not-override-1d4w9r2).ant-radio-wrapper
+  .ant-radio-checked
+  .ant-radio-inner {
+  border-color: #e0305b;
+  background-color: #ff385c;
+}

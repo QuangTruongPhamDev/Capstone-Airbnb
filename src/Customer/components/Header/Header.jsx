@@ -14,16 +14,19 @@ const menuItems = [
   { label: "Contact", id: "contact" },
 ];
 
-export default function Header() {
+export default function Header({ forceWhite = false }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.userSlice);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAvatarHovered, setIsAvatarHovered] = useState(false);
 
   const dropdownRef = useRef(null);
   const avatarRef = useRef(null);
+
+  const isAlwaysWhite = forceWhite;
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -73,11 +76,13 @@ export default function Header() {
   };
 
   // Màu sắc động cho logo và text menu
-  const currentLogoColor = isScrolled ? "#FF385C" : "#FFFFFF"; // Đỏ hồng Airbnb / Trắng
-  const currentMenuTextColor = isScrolled ? "text-gray-700" : "text-gray-100";
-  const currentMenuHoverColor = isScrolled
-    ? "hover:text-red-500"
-    : "hover:text-white hover:bg-white hover:bg-opacity-10";
+  const currentLogoColor = isScrolled || isAlwaysWhite ? "#FF385C" : "#FFFFFF";
+  const currentMenuTextColor =
+    isScrolled || isAlwaysWhite ? "text-gray-700" : "text-gray-100";
+  const currentMenuHoverColor =
+    isScrolled || isAlwaysWhite
+      ? "hover:text-red-500"
+      : "hover:text-white hover:bg-white hover:bg-opacity-10";
 
   const siteName = "airbnb"; // THAY THẾ TÊN TRANG WEB CỦA BẠN
   const logoIconSizeHeader = isScrolled ? "lg" : "xl";
@@ -93,7 +98,7 @@ export default function Header() {
               isScrolled ? "text-gray-600" : "text-gray-300"
             }`}
           >
-            Xin chào, {user.name || user.taiKhoan || "User"}
+            Xin chào, {user?.name || "User"}
           </p>
           <Link
             to="/profile"
@@ -158,8 +163,8 @@ export default function Header() {
   return (
     <header
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out ${
-        isScrolled ? "bg-white shadow-md" : "bg-transparent"
-      }`} // text-color chung sẽ được các phần tử con tự quản lý
+        isScrolled || isAlwaysWhite ? "bg-white shadow-md" : "bg-transparent"
+      }`}
     >
       <div className="max-w-screen-xl mx-auto flex items-center justify-between h-16 sm:h-20 px-4 sm:px-6 lg:px-8">
         {/* Logo */}
@@ -225,20 +230,24 @@ export default function Header() {
                   setIsMobileMenuOpen(true);
                 }}
               />
-              <img
-                src={avatarSrc}
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 object-cover"
-                style={{
-                  borderColor: isScrolled
-                    ? user
-                      ? "#F97316"
-                      : "#D1D5DB"
-                    : user
-                    ? "#FDBA74"
-                    : "#9CA3AF",
-                }}
-                alt="User Avatar"
-              />
+              <div
+                onMouseEnter={() => setIsAvatarHovered(true)}
+                onMouseLeave={() => setIsAvatarHovered(false)}
+              >
+                <img
+                  src={avatarSrc}
+                  alt="User Avatar"
+                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border-4 object-cover"
+                  style={{
+                    borderColor: isAvatarHovered
+                      ? isAlwaysWhite
+                        ? "#c92543"
+                        : "#ffffff"
+                      : "#FF385C",
+                    transition: "border-color 0.2s ease-in-out",
+                  }}
+                />
+              </div>
             </button>
             {isUserDropdownOpen && (
               <div

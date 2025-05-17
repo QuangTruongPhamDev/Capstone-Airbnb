@@ -1,0 +1,14 @@
+.wave-text span {
+  display: inline-block;
+  animation: wave-bounce 1.8s ease-in-out infinite;
+}
+
+@keyframes wave-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}

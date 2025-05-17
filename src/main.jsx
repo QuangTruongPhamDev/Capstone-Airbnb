@@ -5,6 +5,7 @@ import App from "./App.jsx";
 import userSlice from "./Customer/redux/userSlice.js";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
+import loadingSlice from "./Customer/redux/loadingSlice.js";
 
 // --- Cấu hình cho React Leaflet ---
 import "leaflet/dist/leaflet.css"; // Import CSS của Leaflet
@@ -27,6 +28,7 @@ L.Icon.Default.mergeOptions({
 export const store = configureStore({
   reducer: {
     userSlice: userSlice,
+    loadingSlice: loadingSlice,
   },
 });
 

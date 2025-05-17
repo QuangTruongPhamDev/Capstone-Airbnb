@@ -19,7 +19,7 @@ const MapViewUpdater = ({ center, zoom }) => {
 };
 
 const FALLBACK_CENTER = [16.047079, 108.220825]; // Ví dụ: Đà Nẵng
-const FALLBACK_ZOOM = 6;
+const FALLBACK_ZOOM = 16;
 const FALLBACK_LOCATION_NAME = "Khu vực mặc định";
 
 export default function MapDisplayLeaflet({ locationInfo }) {
@@ -71,7 +71,7 @@ export default function MapDisplayLeaflet({ locationInfo }) {
             setMarkerPosition([lat, lon]);
             // Cập nhật lại locationNameForMarker từ kết quả geocoding nếu cần (thường là giống)
             // setLocationNameForMarker(data[0].display_name); // Hoặc giữ nguyên từ locationInfo.tenViTri
-            setMapZoom(13);
+            setMapZoom(16);
           } else {
             console.warn(
               "[MapDisplayLeaflet] Geocoding không tìm thấy kết quả cho:",

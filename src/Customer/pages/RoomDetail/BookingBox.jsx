@@ -49,14 +49,20 @@ export default function BookingBox({
     let isMounted = true;
     setLoadingBookedDates(true);
     roomService
-      .getBookedDatesByRoomId(roomId)
+      .getAllBookings()
       .then((res) => {
         if (!isMounted) return;
-        const apiBookings = res.data?.content || [];
-        const formattedRanges = apiBookings.map((booking) => ({
+        const allBookings = res.data?.content || [];
+        // Lọc booking theo phòng hiện tại
+        const roomBookings = allBookings.filter(
+          (booking) => booking.maPhong === parseInt(roomId)
+        );
+
+        const formattedRanges = roomBookings.map((booking) => ({
           start: dayjs(booking.ngayDen),
           end: dayjs(booking.ngayDi).subtract(1, "second"),
         }));
+
         setBookedDateRanges(formattedRanges);
       })
       .catch((err) => {
@@ -138,17 +144,17 @@ export default function BookingBox({
 
   const handleBooking = async () => {
     if (!currentUser) {
-      setBookingError("Please log in to book.");
+      setBookingError("Đăng nhập để đặt phòng");
       navigate("/dangnhap", { state: { from: `/room-detail/${roomId}` } });
       return;
     }
     if (!dates || !dates[0] || !dates[1] || numberOfNights <= 0) {
-      setBookingError("Please select valid check-in and check-out dates.");
+      setBookingError("Chọn ngày nhận phòng và trả phòng.");
       form.validateFields(["datesInput"]);
       return;
     }
     if (guests <= 0) {
-      setBookingError("Please select the number of guests.");
+      setBookingError("Chọn số lượng khách");
       return;
     }
 
@@ -156,6 +162,7 @@ export default function BookingBox({
     setBookingError(null);
 
     const bookingData = {
+      id: 0,
       maPhong: parseInt(roomId),
       ngayDen: dates[0].format("YYYY-MM-DDTHH:mm:ss"),
       ngayDi: dates[1].format("YYYY-MM-DDTHH:mm:ss"),
@@ -166,8 +173,13 @@ export default function BookingBox({
     try {
       const response = await bookingService.createBooking(bookingData);
       alert("Booking successful!");
-      roomService.getBookedDatesByRoomId(roomId).then((res) => {
-        const newBookedRanges = (res.data?.content || []).map((b) => ({
+      navigate("/profile?refresh=1");
+      roomService.getAllBookings().then((res) => {
+        const allBookings = res.data?.content || [];
+        const filteredBookings = allBookings.filter(
+          (b) => b.maPhong === parseInt(roomId)
+        );
+        const newBookedRanges = filteredBookings.map((b) => ({
           start: dayjs(b.ngayDen),
           end: dayjs(b.ngayDi).subtract(1, "second"),
         }));
@@ -198,7 +210,7 @@ export default function BookingBox({
           <span className="text-2xl font-bold text-gray-900">
             ${pricePerNight?.toLocaleString() || "N/A"}
           </span>
-          <span className="text-gray-600 ml-1 text-base">/ night</span>
+          <span className="text-gray-600 ml-1 text-base">/ đêm</span>
         </div>
         {reviewInfo && reviewInfo.score != null && (
           <div className="flex items-center text-sm">
@@ -207,7 +219,7 @@ export default function BookingBox({
               {reviewInfo.score.toFixed(1)}
             </span>
             <span className="text-gray-500 ml-1 hover:underline cursor-pointer">
-              ({reviewInfo.count} reviews)
+              ({reviewInfo.count} đánh giá)
             </span>
           </div>
         )}
@@ -247,9 +259,9 @@ export default function BookingBox({
           <div className="border-x border-b border-gray-300 rounded-b-lg p-3 cursor-pointer flex justify-between items-center hover:border-gray-400">
             <div>
               <label className="block text-xs font-semibold uppercase text-gray-700">
-                Guests
+                Khách
               </label>
-              <span className="text-sm text-gray-800">{guests} guests</span>
+              <span className="text-sm text-gray-800">{guests} khách</span>
             </div>
             <ChevronDown
               className={`w-5 h-5 text-gray-600 transition-transform ${
@@ -273,16 +285,16 @@ export default function BookingBox({
           disabled={!dates || numberOfNights === 0 || loadingBookedDates}
         >
           {loadingBookedDates
-            ? "Checking availability..."
+            ? "Đang kiểm tra phòng trống..."
             : numberOfNights > 0
-            ? "Reserve"
-            : "Select dates"}
+            ? "Đặt phòng"
+            : "Chọn ngày"}
         </Button>
       </Form>
 
       {numberOfNights > 0 && (
         <p className="text-xs text-gray-500 text-center mt-3">
-          You won’t be charged yet
+          Bạn vẫn chưa bị trừ tiền
         </p>
       )}
       {bookingError && (
@@ -293,17 +305,17 @@ export default function BookingBox({
         <div className="mt-6 space-y-2 text-sm text-gray-700">
           <div className="flex justify-between">
             <span>
-              ${pricePerNight?.toLocaleString()} x {numberOfNights} nights
+              ${pricePerNight?.toLocaleString()} x {numberOfNights} đêm
             </span>
             <span>${totalPrice.toLocaleString()}</span>
           </div>
           <div className="flex justify-between">
-            <span>Service fee</span>
+            <span>Phí dịch vụ</span>
             <span>${serviceFee.toLocaleString()}</span>
           </div>
           <Divider className="!my-3" />
           <div className="flex justify-between font-bold text-base text-gray-900">
-            <span>Total</span>
+            <span>Tổng cộng</span>
             <span>${totalWithFees.toLocaleString()}</span>
           </div>
         </div>

@@ -12,7 +12,7 @@ export default function HomePage() {
       <VideoBanner />
 
       {/* Thanh tìm kiếm, z-40 để nổi trên SVG của banner (z-20) */}
-      <div className="container mx-auto px-4 -mt-10 md:-mt-12 relative z-40">
+      <div className="container mx-auto px-4 mt-4 md:mt-12 relative z-40">
         <MainSearchForm />
       </div>
 
