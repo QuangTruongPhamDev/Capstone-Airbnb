@@ -1,19 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { updateAuthToken } from "../api/config";
-
-let userData = null;
-try {
-  const userJson = localStorage.getItem("USER");
-  if (userJson) {
-    userData = JSON.parse(userJson);
-    updateAuthToken(userData.accessToken); // đảm bảo token có sau khi refresh
-  }
-} catch (error) {
-  console.error("Error parsing user data:", error);
-}
+import {
+  clearUser,
+  getStoredUser,
+  storeUser,
+} from "../../utils/LocalStorageHelper";
 
 const initialState = {
-  user: userData,
+  user: getStoredUser(),
 };
 
 const userSlice = createSlice({
@@ -21,14 +15,15 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUserAction: (state, action) => {
-      state.user = action.payload.user;
-      localStorage.setItem("USER", JSON.stringify(action.payload));
-      updateAuthToken(action.payload.token); // cập nhật token axios
+      const { token, user } = action.payload;
+      state.user = { ...user, token };
+      storeUser(state.user);
+      updateAuthToken(token); // cập nhật token vào Axios
     },
     logOutAction: (state) => {
       state.user = null;
-      localStorage.removeItem("USER");
-      updateAuthToken(""); // xoá token khỏi axios
+      clearUser();
+      updateAuthToken("");
     },
   },
 });
