@@ -24,6 +24,7 @@ let userInfo = getStoredUser();
 if (userInfo) {
   updateAuthToken(userInfo.token);
 }
+
 https.interceptors.request.use(
   function (config) {
     console.log("Api đi");
