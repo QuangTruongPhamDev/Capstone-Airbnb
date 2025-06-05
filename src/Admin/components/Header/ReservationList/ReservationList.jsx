@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import "./index.css";
-import { addReservationService, deleteReservationService, getReservationService, updateReservationService } from "../../../api/reservationService";
+import {
+    addReservationService,
+    deleteReservationService,
+    getReservationService,
+    updateReservationService,
+} from "../../../api/reservationService";
 import { Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function ReservationList() {
     const [reservations, setReservations] = useState([]);
@@ -27,15 +34,15 @@ export default function ReservationList() {
 
     const fetchReservations = () => {
         getReservationService()
-      .then((res) => {
-        const data = res?.data?.content || [];
-        setReservations(data);
-      })
-      .catch((err) => {
-        console.error("Lỗi khi tải danh sách đặt phòng:", err);
-      });
+            .then((res) => {
+                const data = res?.data?.content || [];
+                setReservations(data);
+            })
+            .catch((err) => {
+                toast.error("Lỗi khi tải danh sách đặt phòng");
+                console.error("Lỗi khi tải danh sách đặt phòng:", err);
+            });
     };
-
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -51,15 +58,15 @@ export default function ReservationList() {
                         item?.id === editingId ? { ...form, id: editingId } : item
                     )
                 );
-                alert("Cập nhật thành công");
+                toast.success("Cập nhật đặt phòng thành công");
             } else {
                 const res = await addReservationService(form);
-                setReservations((prev) => [...prev, res.content]);
-                alert("Thêm đặt phòng thành công");
+                setReservations((prev) => [...prev, res?.data?.content]);
+                toast.success("Thêm đặt phòng thành công");
             }
             resetForm();
         } catch (err) {
-            alert("Lỗi thao tác: " + err?.response?.data?.content || err.message);
+            toast.error("Lỗi thao tác: " + (err?.response?.data?.content || err.message));
         }
     };
 
@@ -81,9 +88,9 @@ export default function ReservationList() {
             try {
                 await deleteReservationService(id);
                 setReservations(reservations.filter((item) => item.id !== id));
-                alert("Xóa đặt phòng thành công");
+                toast.success("Xóa đặt phòng thành công");
             } catch {
-                alert("Lỗi khi xóa đặt phòng");
+                toast.error("Lỗi khi xóa đặt phòng");
             }
         }
     };
@@ -117,7 +124,6 @@ export default function ReservationList() {
             setCurrentPage(newPage);
         }
     };
-
 
     return (
         <div className="reservation-body">
@@ -257,8 +263,7 @@ export default function ReservationList() {
                     {Array.from({ length: totalPages }, (_, i) => (
                         <button
                             key={i}
-                            className={`reservation-button ${currentPage === i + 1 ? "active" : ""
-                                }`}
+                            className={`reservation-button ${currentPage === i + 1 ? "active" : ""}`}
                             onClick={() => handleChangePage(i + 1)}
                         >
                             {i + 1}
@@ -273,6 +278,7 @@ export default function ReservationList() {
                     </button>
                 </div>
             </div>
+            <ToastContainer position="top-right" autoClose={2000} />
         </div>
     );
 }

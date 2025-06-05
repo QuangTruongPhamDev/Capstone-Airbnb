@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import "./index.css"
+import "./index.css";
 import { deleteUserService, getUserService, updateUserService } from "../../../api/userService";
 import axios from "axios";
-import { toast } from "react-toastify";
-import { CYBER_TOKERN } from '../../../api/config';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { CYBER_TOKERN } from "../../../api/config";
 import { Link } from "react-router-dom";
-
-
 
 export default function UserList() {
     const [userList, setUserList] = useState([]);
@@ -45,7 +44,8 @@ export default function UserList() {
                 setUserList(res.data.content);
             })
             .catch((err) => {
-                console.log("Lỗi khi không cập nhật được người dùng:", err);
+                toast.error("Không thể tải danh sách người dùng!");
+                console.error("Lỗi khi tải danh sách người dùng:", err);
             });
     };
 
@@ -65,13 +65,12 @@ export default function UserList() {
                 await updateUserService(editingUser.id, newAdmin);
                 toast.success("Cập nhật người dùng thành công!");
             } else {
-                const res = await axios.post(
+                await axios.post(
                     "https://airbnbnew.cybersoft.edu.vn/api/users",
                     newAdmin,
                     {
                         headers: {
                             tokenCybersoft: CYBER_TOKERN,
-                            //Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
                         },
                     }
                 );
@@ -89,7 +88,7 @@ export default function UserList() {
             });
             setEditingUser(null);
         } catch (error) {
-            toast.error("Thêm quản trị viên thất bại!");
+            toast.error("Thêm/cập nhật người dùng thất bại!");
             console.error(error.response?.data || error.message);
         }
     };
@@ -102,6 +101,7 @@ export default function UserList() {
                 fetchUsers();
             } catch (error) {
                 toast.error("Xóa người dùng thất bại!");
+                console.error(error);
             }
         }
     };
@@ -112,14 +112,14 @@ export default function UserList() {
             email: userlist.email,
             username: userlist.username,
             phone: userlist.phone,
-            password: "", // không lấy mật khẩu cũ
+            password: "",
             role: userlist.role,
         });
         setEditingUser(userlist);
         setShowAddAdminModal(true);
     };
 
-    const filteredUserList = userList.filter((userlist) => 
+    const filteredUserList = userList.filter((userlist) =>
         userlist.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -129,9 +129,9 @@ export default function UserList() {
 
     const changePage = (newPage) => {
         if (newPage >= 1 && newPage <= totalPages) {
-          setCurrentPage(newPage);
+            setCurrentPage(newPage);
         }
-      }; 
+    };
 
     return (
         <div className="userlist-body">
@@ -141,12 +141,13 @@ export default function UserList() {
                     <div className="userlist-user-section">
                         <div className="userlist-avatar">A</div>
                         <Link to="/">
-                            <span href="#">Đăng xuất</span>
+                            <span>Đăng xuất</span>
                         </Link>
                     </div>
                 </div>
 
-                <button className="userlist-btn-add"
+                <button
+                    className="userlist-btn-add"
                     onClick={() => {
                         setEditingUser(null);
                         setAdminForm({
@@ -157,8 +158,9 @@ export default function UserList() {
                             password: "",
                             role: "ADMIN",
                         });
-                        setShowAddAdminModal(true)
-                    }}>
+                        setShowAddAdminModal(true);
+                    }}
+                >
                     Thêm quản trị viên
                 </button>
 
@@ -201,23 +203,25 @@ export default function UserList() {
                         ))}
                     </tbody>
                 </table>
-                {/* Phân trang */}
 
                 {filteredUserList.length === 0 && <p>Không tìm thấy người dùng phù hợp.</p>}
 
                 <div className="userlist-pagination">
-                    <button onClick={() => changePage(currentPage - 1)} className="userlist-button" disabled={currentPage === 1}>«</button>
+                    <button onClick={() => changePage(currentPage - 1)} className="userlist-button" disabled={currentPage === 1}>
+                        «
+                    </button>
                     {Array.from({ length: totalPages }, (_, i) => (
                         <button
                             key={i}
-                            className={`userlist-button ${currentPage === i + 1 ? "active" : ""
-                                }`}
+                            className={`userlist-button ${currentPage === i + 1 ? "active" : ""}`}
                             onClick={() => setCurrentPage(i + 1)}
                         >
                             {i + 1}
                         </button>
                     ))}
-                    <button onClick={() => changePage(currentPage + 1)} className="userlist-button" disabled={currentPage === totalPages}>»</button>
+                    <button onClick={() => changePage(currentPage + 1)} className="userlist-button" disabled={currentPage === totalPages}>
+                        »
+                    </button>
                 </div>
             </div>
 
@@ -232,9 +236,7 @@ export default function UserList() {
                                 className="w-full p-2 border rounded"
                                 name="name"
                                 value={adminForm.name}
-                                onChange={
-                                    handleChange
-                                }
+                                onChange={handleChange}
                                 required
                             />
                             <input
@@ -243,9 +245,7 @@ export default function UserList() {
                                 className="w-full p-2 border rounded"
                                 name="email"
                                 value={adminForm.email}
-                                onChange={
-                                    handleChange
-                                }
+                                onChange={handleChange}
                                 required
                             />
                             <input
@@ -254,9 +254,7 @@ export default function UserList() {
                                 className="w-full p-2 border rounded"
                                 name="username"
                                 value={adminForm.username}
-                                onChange={
-                                    handleChange
-                                }
+                                onChange={handleChange}
                                 required
                             />
                             <input
@@ -265,9 +263,7 @@ export default function UserList() {
                                 className="w-full p-2 border rounded"
                                 name="phone"
                                 value={adminForm.phone}
-                                onChange={
-                                    handleChange
-                                }
+                                onChange={handleChange}
                                 required
                             />
                             <input
@@ -276,9 +272,7 @@ export default function UserList() {
                                 className="w-full p-2 border rounded"
                                 name="password"
                                 value={adminForm.password}
-                                onChange={
-                                    handleChange
-                                }
+                                onChange={handleChange}
                                 required
                             />
                             <div className="flex justify-end gap-2">
@@ -301,6 +295,7 @@ export default function UserList() {
                 </div>
             )}
 
+            <ToastContainer position="top-right" autoClose={2000} />
         </div>
     );
 }
