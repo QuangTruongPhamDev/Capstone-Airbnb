@@ -5,34 +5,42 @@ import { Link } from "react-router-dom";
 export default function Sidebar() {
   return (
     <div className="sidebar-body">
-        <div className="sidebar-sidebar">
+      <div className="sidebar-sidebar">
         <div className="sidebar-logo">
-            <i class="sidebar-icon fab fa-airbnb"></i>
-            <h2 className="sidebar-h2">airbnb</h2>
+          <i className="sidebar-icon fab fa-airbnb"></i>
+          <h2 className="sidebar-h2">airbnb</h2>
         </div>
         <ul className="sidebar-ul">
-            <Link to="/UserPage">
+          <Link to="/UserPage">
             <li className="sidebar-li">
-                <span className="sidebar-span" href="#">Quản lý người dùng</span>
+              <span className="sidebar-span" href="#">
+                Quản lý người dùng
+              </span>
             </li>
-            </Link>
-            <Link to="/LocationPage">
+          </Link>
+          <Link to="/LocationPage">
             <li className="sidebar-li">
-                <span href="#" className="sidebar-span">Quản lý thông tin vị trí</span>
+              <span href="#" className="sidebar-span">
+                Quản lý thông tin vị trí
+              </span>
             </li>
-            </Link>
-            <Link to="/AdminPage">
+          </Link>
+          <Link to="/AdminPage">
             <li className="active sidebar-li">
-                <span href="#" className="sidebar-span">Quản lý thông tin phòng</span>
+              <span href="#" className="sidebar-span">
+                Quản lý thông tin phòng
+              </span>
             </li>
-            </Link>
-            <Link to="/ReservationPage">
+          </Link>
+          <Link to="/ReservationPage">
             <li className="sidebar-li">
-                <span href="#" className="sidebar-span">Quản lý đặt phòng</span>
+              <span href="#" className="sidebar-span">
+                Quản lý đặt phòng
+              </span>
             </li>
-            </Link>
+          </Link>
         </ul>
-        </div>
+      </div>
     </div>
   );
 }
