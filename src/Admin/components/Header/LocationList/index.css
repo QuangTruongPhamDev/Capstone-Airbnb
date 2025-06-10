@@ -28,8 +28,8 @@
   }
 
   .locationlist-avatar {
-    background-color: #f8c291;
-    color: black;
+    background-color: #007bff;
+    color: white;
     border-radius: 50%;
     width: 32px;
     height: 32px;
@@ -38,9 +38,24 @@
     justify-content: center;
     font-weight: bold;
   }
+
+  .locationlist-section span {
+    color: #007bff;
+    margin: 10px;
+  }
+
+  .locationlist-section span:hover {
+    color: #102dac;
+  }
+
+  .locationlist-home {
+    cursor: pointer;
+    margin: 20px;
+    font-size: 20px;
+  }
   
   .locationlist-btn-add {
-    background-color: #1890ff;
+    background-color: #28a745;
     color: white;
     padding: 8px 16px;
     border: none;
@@ -49,7 +64,7 @@
   }
 
   .locationlist-btn-add:hover {
-    background-color: #1677cc;
+    background-color: #218838;
   }
 
   .locationlist-form .locationlist-input {

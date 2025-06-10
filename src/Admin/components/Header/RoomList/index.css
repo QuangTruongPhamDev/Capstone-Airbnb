@@ -47,14 +47,20 @@
   font-weight: bold;
   font-size: 1em;
 }
-.roomlist-logout a {
-  text-decoration: none;
+.roomlist-logout span {
   color: #007bff;
-  font-weight: 500;
+  margin: 10px;
 }
-.roomlist-logout a:hover {
-  text-decoration: underline;
+.roomlist-logout span:hover {
+  color: #102dac;
 }
+
+.roomlist-home {
+  cursor: pointer;
+  margin: 20px;
+  font-size: 20px;
+}
+
 
 /* Styles for controls (add button and search box) */
 .roomlist-controls {
@@ -337,6 +343,6 @@
 /* Bạn có thể chuyển style inline của AlertMessage ra đây nếu muốn */
 
 /* Icons (Font Awesome) - Đảm bảo bạn đã nhúng Font Awesome vào dự án */
-.roomlist-i {
+/* .roomlist-i { */
   /* Style chung cho icon nếu cần */
-}
+/* } */

@@ -32,8 +32,8 @@
   }
 
   .reservation-avatar {
-    background-color: #f8c291;
-    color: black;
+    background-color: #007bff;
+    color: white;
     border-radius: 50%;
     width: 32px;
     height: 32px;
@@ -42,10 +42,25 @@
     justify-content: center;
     font-weight: bold;
   }
+
+  .reservation-user-section span {
+    color: #007bff;
+    margin: 10px;
+  }
+
+  .reservation-user-section span:hover {
+    color: #102dac;
+  }
+
+  .reservation-home {
+    cursor: pointer;
+    margin: 20px;
+    font-size: 20px;
+  }
   
   .reservation-btn-add {
     padding: 8px 16px;
-    background-color: #1890ff;
+    background-color: #28a745;
     color: white;
     border: none;
     border-radius: 6px;
@@ -54,7 +69,7 @@
   }
   
   .reservation-btn-add:hover {
-    background-color: #1677cc;
+    background-color: #218838;
   }
 
   .reservation-form .reservation-input {

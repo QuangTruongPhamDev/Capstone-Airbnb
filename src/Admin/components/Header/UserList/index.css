@@ -29,7 +29,8 @@
   }
   
   .userlist-avatar {
-    background-color: #f8c291;
+    background-color: #007bff;
+    color: white;
     width: 36px;
     height: 36px;
     border-radius: 50%;
@@ -38,15 +39,34 @@
     margin-right: 10px;
     font-weight: bold;
   }
+
+  .userlist-user-section span {
+    color: #007bff;
+    margin: 10px;
+  }
+
+  .userlist-user-section span:hover {
+    color: #102dac;
+  }
+
+  .userlist-home {
+    cursor: pointer;
+    margin: 20px;
+    font-size: 20px;
+  }
   
   .userlist-btn-add {
-    background-color: #3498db;
+    background-color: #28a745;
     color: white;
     border: none;
     padding: 10px 16px;
     margin-top: 20px;
     border-radius: 5px;
     cursor: pointer;
+  }
+
+  .userlist-btn-add:hover {
+    background-color: #218838;
   }
   
   .userlist-search-box {
@@ -57,7 +77,7 @@
   .userlist-search-box userlist-input {
     width: 300px;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #1d1a1a;
     border-right: none;
     border-radius: 5px 0 0 5px;
   }

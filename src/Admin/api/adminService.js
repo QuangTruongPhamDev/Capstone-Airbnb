@@ -28,6 +28,56 @@ export const getAdminService = () => {
     throw err.response?.data || new Error("Không thể tải danh sách phòng.");
   });
 };
+// export const getAdminService = (
+//   pageIndex = 1,
+//   pageSize = 10,
+//   keyword = ""
+// ) => {
+//   const userInfo = JSON.parse(localStorage.getItem("USER"));
+
+//   return axios.get(`${API_URL}/phan-trang-tim-kiem`, {
+//     params: {
+//       pageIndex,
+//       pageSize,
+//       keyword,
+//     },
+//     headers: {
+//       tokenCybersoft: CYBER_TOKERN,
+//       token: userInfo?.token,
+//     },
+//   });
+// };
+
+export const uploadRoomImage = (roomId, file) => {
+  const formData = new FormData();
+  formData.append("formFile", file);
+
+  return axios.post(
+    `${API_URL}/upload-hinh-phong?maPhong=${roomId}`,
+    formData,
+    {
+      headers: {
+        tokenCybersoft: CYBER_TOKERN,
+        token: token,
+      },
+    }
+  );
+};
+
+// export const getAdminServices = {
+//   getRoomListPagination: (pageIndex = 1, pageSize = 10, keyword = "") => {
+//     return axios.get(`${API_URL}/phan-trang-tim-kiem`, {
+//       params: {
+//         pageIndex,
+//         pageSize,
+//         keyword
+//       },
+//       headers: {
+//         TokenCybersoft: CYBER_TOKERN
+//       }
+//     });
+//   }
+// }
 
 export const addroomService = async (form) => {
   const token = getUserToken();

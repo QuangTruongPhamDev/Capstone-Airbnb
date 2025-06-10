@@ -9,3 +9,5 @@ export const https = axios.create({
     tokenCybersoft: CYBER_TOKERN,
   },
 });
+
+export const API_URL = "https://airbnbnew.cybersoft.edu.vn/api/users";

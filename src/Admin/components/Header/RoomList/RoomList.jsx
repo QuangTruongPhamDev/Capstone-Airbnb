@@ -7,6 +7,7 @@ import {
   updateRoomService,
   uploadRoomImageService,
 } from "../../../api/adminService";
+import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 
 // Component AlertMessage (để hiển thị thông báo)
@@ -63,11 +64,13 @@ export default function RoomList() {
 
   const itemsPerPage = 10;
 
+
+
   const fetchRooms = useCallback(() => {
     setLoading(true);
     setError(null);
     getAdminService()
-      .then((res) => setRooms(res.data.content || []))
+      .then((res) => setRooms(res?.data?.content || []))
       .catch((err) => {
         console.error("Lỗi khi tải danh sách phòng (component):", err);
         setError(err.message || "Lỗi khi tải danh sách phòng.");
@@ -78,6 +81,7 @@ export default function RoomList() {
   useEffect(() => {
     fetchRooms();
   }, [fetchRooms]);
+
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -94,6 +98,20 @@ export default function RoomList() {
       setImagePreview(null);
     }
   };
+  // const handleUploadImage = async (roomId, file) => {
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("formFile", file);
+
+  //     await uploadRoomImageService(roomId, formData);
+  //     toast.success("Tải ảnh lên thành công!");
+  //     fetchRooms();
+  //   } catch (error) {
+  //     toast.error("Tải ảnh lên thất bại!");
+  //     console.error(error);
+  //   }
+  // };
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -120,64 +138,44 @@ export default function RoomList() {
       giuong: parseInt(form.giuong, 10) || 0,
       phongTam: parseInt(form.phongTam, 10) || 0,
       giaTien: parseInt(form.giaTien, 10) || 0,
-      // Bỏ trường hinhAnh khỏi payload chính vì sẽ xử lý qua upload file
-      // Tuy nhiên, nếu API add/update cho phép gửi hinhAnh là URL, bạn có thể giữ lại
-      // và chỉ upload nếu selectedFile tồn tại. Ở đây, giả định hinhAnh sẽ được cập nhật sau khi upload.
     };
-    delete payload.hinhAnh; // Xóa trường hinhAnh khỏi payload chính nếu nó chỉ là URL cũ
+    delete payload.hinhAnh;
 
     try {
-      let roomDataToUpdateState; // Dữ liệu phòng sau cùng để cập nhật state
-
+      let roomData;
       if (isEditing && editingRoomId !== null) {
-        // 1. Cập nhật thông tin phòng (trừ hình ảnh)
-        const updatedRoomInfo = await updateRoomService(editingRoomId, payload);
-        roomDataToUpdateState = { ...updatedRoomInfo }; // Dữ liệu ban đầu sau khi update text fields
+        const res = await updateRoomService(editingRoomId, payload);
+        roomData = res.data?.content || { ...form, id: editingRoomId };
 
-        // 2. Nếu có file mới được chọn, upload hình ảnh
         if (selectedFile) {
-          const uploadedImageInfo = await uploadRoomImageService(
-            editingRoomId,
-            selectedFile
-          );
-          // Giả sử uploadedImageInfo là object phòng đã có URL hình ảnh mới
-          roomDataToUpdateState = {
-            ...roomDataToUpdateState,
-            ...uploadedImageInfo,
-          };
+          const uploadRes = await uploadRoomImageService(editingRoomId, selectedFile);
+          roomData.hinhAnh = uploadRes.data?.content?.hinhAnh || roomData.hinhAnh;
+          toast.success("Cập nhật ảnh thành công!");
         }
 
-        setRooms((prevRooms) =>
-          prevRooms.map((room) =>
-            room.id === editingRoomId ? roomDataToUpdateState : room
-          )
+        setRooms((prev) =>
+          prev.map((r) => (r.id === editingRoomId ? roomData : r))
         );
         setSuccessMessage("Cập nhật phòng thành công!");
       } else {
-        // Thêm phòng mới
-        // 1. Thêm phòng với thông tin cơ bản (trừ hình ảnh)
-        const newRoomInfo = await addroomService(payload);
-        roomDataToUpdateState = { ...newRoomInfo }; // Dữ liệu ban đầu sau khi thêm phòng
+        const res = await addroomService(payload);
+        roomData = res.data?.content;
 
-        // 2. Nếu có file được chọn, upload hình ảnh cho phòng vừa tạo
-        if (selectedFile && newRoomInfo.id) {
-          const uploadedImageInfo = await uploadRoomImageService(
-            newRoomInfo.id,
-            selectedFile
-          );
-          roomDataToUpdateState = {
-            ...roomDataToUpdateState,
-            ...uploadedImageInfo,
-          };
+        if (selectedFile && roomData?.id) {
+          const uploadRes = await uploadRoomImageService(roomData.id, selectedFile);
+          roomData.hinhAnh = uploadRes.data?.content?.hinhAnh || roomData.hinhAnh;
+          toast.success("Tải ảnh phòng thành công!");
         }
 
-        setRooms((prevRooms) => [...prevRooms, roomDataToUpdateState]);
+        setRooms((prev) => [...prev, roomData]);
         setSuccessMessage("Thêm phòng thành công!");
       }
+
+      fetchRooms();
       resetFormAndFile();
     } catch (err) {
-      console.error("Lỗi khi submit form:", err);
-      setError(err.message || "Đã xảy ra lỗi. Vui lòng thử lại.");
+      console.error("Lỗi khi submit:", err);
+      setError(err.message || "Đã xảy ra lỗi.");
     } finally {
       setLoading(false);
     }
@@ -203,6 +201,7 @@ export default function RoomList() {
         await deleteRoomService(id);
         setRooms((prevRooms) => prevRooms.filter((room) => room.id !== id));
         setSuccessMessage("Xóa phòng thành công!");
+        fetchRooms();
       } catch (err) {
         console.error("Lỗi khi xóa phòng (component):", err);
         setError(err.message || "Lỗi khi xóa phòng.");
@@ -274,10 +273,8 @@ export default function RoomList() {
         <div className="roomlist-header">
           <h1 className="roomlist-h1">Quản lý Phòng</h1>
           <div className="roomlist-logout">
-            <span className="roomlist-avatar">A</span>{" "}
-            {/* Cân nhắc thay bằng ảnh thật hoặc tên viết tắt */}
             <Link to="/">
-              <span>Đăng xuất</span>
+              <span><i className="roomlist-home fa fa-home"></i></span>
             </Link>
           </div>
         </div>
@@ -439,6 +436,7 @@ export default function RoomList() {
               <input
                 type="file"
                 id="hinhAnhFile"
+                value={form.hinhAnh}
                 className="roomlist-input-file"
                 accept="image/png, image/jpeg, image/jpg"
                 onChange={handleFileChange}
@@ -487,8 +485,8 @@ export default function RoomList() {
                 {loading
                   ? "Đang xử lý..."
                   : isEditing
-                  ? "Cập nhật"
-                  : "Thêm mới"}
+                    ? "Cập nhật"
+                    : "Thêm mới"}
               </button>
               <button
                 type="button"
@@ -528,6 +526,7 @@ export default function RoomList() {
                   <td className="roomlist-td">
                     {room.hinhAnh ? (
                       <img
+                        key={room.hinhAnh}
                         src={room.hinhAnh}
                         alt={room.tenPhong || "Hình ảnh phòng"}
                         width="80"
@@ -540,7 +539,7 @@ export default function RoomList() {
                     )}
                   </td>
                   <td className="roomlist-td">
-                    {room.giaTien?.toLocaleString()} VND
+                    {room.giaTien?.toLocaleString()} $
                   </td>
                   <td className="roomlist-td">{room.khach}</td>
                   <td className="roomlist-td">{room.maViTri}</td>
@@ -571,7 +570,7 @@ export default function RoomList() {
             <button
               onClick={() => changePage(currentPage - 1)}
               className="roomlist-button"
-              disabled={currentPage === 1}
+
             >
               «
             </button>
@@ -579,9 +578,8 @@ export default function RoomList() {
               <button
                 key={i}
                 onClick={() => changePage(i + 1)}
-                className={`roomlist-button ${
-                  currentPage === i + 1 ? "active" : ""
-                }`}
+                className={`roomlist-button ${currentPage === i + 1 ? "active" : ""
+                  }`}
               >
                 {i + 1}
               </button>
@@ -589,7 +587,7 @@ export default function RoomList() {
             <button
               onClick={() => changePage(currentPage + 1)}
               className="roomlist-button"
-              disabled={currentPage === totalPages || totalPages === 0}
+
             >
               »
             </button>
