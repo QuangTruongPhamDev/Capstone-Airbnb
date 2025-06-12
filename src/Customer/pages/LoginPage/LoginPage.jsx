@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { loginService } from "../../api/userService";
 import { setUserAction } from "../../redux/userSlice";
 import toast from "react-hot-toast";
@@ -10,10 +10,32 @@ import Lottie from "lottie-react";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
-  const { user: userFromRedux } = useSelector((state) => state.userSlice); // Đổi tên để rõ ràng
+  const { user: userFromRedux } = useSelector((state) => state.userSlice);
   const [form] = Form.useForm();
 
+  // 1. Redirect nếu đã đăng nhập
+  useEffect(() => {
+    if (userFromRedux) {
+      const role = userFromRedux.user?.role || userFromRedux.role;
+      const from = location.state?.from || "/";
+
+      if (role?.toUpperCase() === "ADMIN") {
+        // Nếu là ADMIN thì luôn chuyển về AdminPage
+        navigate("/AdminPage", { replace: true });
+      } else {
+        // Nếu không phải ADMIN thì xử lý theo from cũ
+        if (from === "/login" || from === "/dangky") {
+          navigate("/", { replace: true });
+        } else {
+          navigate(from, { replace: true });
+        }
+      }
+    }
+  }, [userFromRedux, navigate, location.state]);
+
+  // 2. Tự động điền email/password nếu vừa đăng ký
   useEffect(() => {
     const recent = localStorage.getItem("RECENT_REGISTER");
     if (recent) {
@@ -27,46 +49,19 @@ export default function LoginPage() {
     }
   }, [form]);
 
+  // 3. Xử lý đăng nhập
   const handleLogin = async (values) => {
-    // values từ Form, ví dụ { email, password }
     try {
-      // 1. Gọi loginService (đã sửa, chỉ trả về response.data.content)
-      const responseDataContent = await loginService(values); // responseDataContent LÀ dữ liệu user + token
-      console.log("responseDataContent:", responseDataContent);
-      // 2. Dispatch setUserAction với toàn bộ dữ liệu nhận được
-      // userSlice.setUserAction sẽ tự xử lý cấu trúc của responseDataContent
+      const responseDataContent = await loginService(values);
       if (responseDataContent) {
         dispatch(setUserAction(responseDataContent));
         toast.success("Đăng nhập thành công!");
-
-        // 3. Xử lý điều hướng dựa trên role từ responseDataContent
-        // Bạn cần xác định chính xác API trả về role ở đâu trong responseDataContent
-        // Ví dụ 1: Nếu responseDataContent là { user: { id, role,... }, token: "..." }
-        let userRole = responseDataContent.user?.role;
-
-        // Ví dụ 2: Nếu responseDataContent là { id, role, ..., accessToken: "..." }
-        if (!userRole && responseDataContent.role) {
-          userRole = responseDataContent.role;
-        }
-        // Ví dụ 3: Nếu responseDataContent là { id, quyen, ..., accessToken: "..." } (tên key là 'quyen')
-        // if (!userRole && responseDataContent.quyen) {
-        //   userRole = responseDataContent.quyen;
-        // }
-
-        if (userRole?.toUpperCase() === "ADMIN") {
-          navigate("/AdminPage");
-        } else {
-          navigate("/");
-        }
+        // Không cần gọi navigate ở đây nữa, useEffect sẽ lo redirect
       } else {
-        // Trường hợp loginService không throw error mà trả về null/undefined (ít khả thi)
         toast.error("Đăng nhập thất bại: Không có dữ liệu trả về.");
       }
     } catch (error) {
-      // Lỗi được ném từ loginService (bao gồm lỗi mạng, lỗi API 4xx, 5xx)
       console.error("Lỗi trong handleLogin:", error);
-      // error.response.data.message là thông báo lỗi từ API (ví dụ: "Email hoặc mật khẩu không đúng")
-      // error.message là thông báo lỗi chung (ví dụ: "Network Error")
       toast.error(
         error.response?.data?.message ||
           error.message ||

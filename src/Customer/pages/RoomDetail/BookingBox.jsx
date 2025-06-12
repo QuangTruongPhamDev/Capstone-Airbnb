@@ -18,6 +18,7 @@ import { ChevronDown } from "lucide-react";
 import { bookingService } from "../../api/bookingService";
 import "./BookingBox.css"; // Import CSS file for custom styles
 import isBetween from "dayjs/plugin/isBetween";
+import toast from "react-hot-toast";
 
 dayjs.extend(isBetween);
 const { RangePicker } = DatePicker;
@@ -172,7 +173,7 @@ export default function BookingBox({
 
     try {
       const response = await bookingService.createBooking(bookingData);
-      alert("Booking successful!");
+      toast.success("Đặt phòng thành công!");
       navigate("/profile?refresh=1");
       roomService.getAllBookings().then((res) => {
         const allBookings = res.data?.content || [];
@@ -189,10 +190,10 @@ export default function BookingBox({
       form.resetFields(["datesInput"]);
     } catch (err) {
       console.error("Booking error:", err);
-      setBookingError(
+      toast.error(
         err.response?.data?.message ||
           err.message ||
-          "Booking failed. Please try again."
+          "Đặt phòng thất bại. Vui lòng thử lại!"
       );
     } finally {
       setBookingLoading(false);
