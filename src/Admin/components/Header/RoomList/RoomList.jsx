@@ -98,21 +98,7 @@ export default function RoomList() {
       setImagePreview(null);
     }
   };
-  // const handleUploadImage = async (roomId, file) => {
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append("formFile", file);
-
-  //     await uploadRoomImageService(roomId, formData);
-  //     toast.success("Tải ảnh lên thành công!");
-  //     fetchRooms();
-  //   } catch (error) {
-  //     toast.error("Tải ảnh lên thất bại!");
-  //     console.error(error);
-  //   }
-  // };
-
-
+  
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     let processedValue = value;
@@ -149,7 +135,7 @@ export default function RoomList() {
 
         if (selectedFile) {
           const uploadRes = await uploadRoomImageService(editingRoomId, selectedFile);
-          roomData.hinhAnh = uploadRes.data?.content?.hinhAnh || roomData.hinhAnh;
+          roomData.hinhAnh = uploadRes.hinhAnh || roomData.hinhAnh;
           toast.success("Cập nhật ảnh thành công!");
         }
 
@@ -163,7 +149,8 @@ export default function RoomList() {
 
         if (selectedFile && roomData?.id) {
           const uploadRes = await uploadRoomImageService(roomData.id, selectedFile);
-          roomData.hinhAnh = uploadRes.data?.content?.hinhAnh || roomData.hinhAnh;
+          console.log("Upload response:", uploadRes);
+          roomData.hinhAnh = uploadRes.hinhAnh || roomData.hinhAnh;
           toast.success("Tải ảnh phòng thành công!");
         }
 
@@ -243,7 +230,7 @@ export default function RoomList() {
 
   // filteredRoom, totalPages, startIndex, currentRooms, changePage (giữ nguyên)
   const filteredRoom = rooms.filter((room) =>
-    room.tenPhong?.toLowerCase().includes(searchRoom.toLowerCase())
+    room?.tenPhong?.toLowerCase().includes(searchRoom.toLowerCase())
   );
   const totalPages = Math.ceil(filteredRoom.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -526,7 +513,6 @@ export default function RoomList() {
                   <td className="roomlist-td">
                     {room.hinhAnh ? (
                       <img
-                        key={room.hinhAnh}
                         src={room.hinhAnh}
                         alt={room.tenPhong || "Hình ảnh phòng"}
                         width="80"

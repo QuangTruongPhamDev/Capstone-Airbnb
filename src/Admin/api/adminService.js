@@ -48,10 +48,7 @@ export const getAdminService = () => {
 //   });
 // };
 
-export const uploadRoomImage = (roomId, file) => {
-  const formData = new FormData();
-  formData.append("formFile", file);
-
+export const uploadRoomImage = (roomId, formData) => {
   return axios.post(
     `${API_URL}/upload-hinh-phong?maPhong=${roomId}`,
     formData,
