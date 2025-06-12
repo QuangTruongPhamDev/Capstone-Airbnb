@@ -110,6 +110,7 @@ export default function RoomList() {
     reader.readAsDataURL(file);
   };
 
+
   // const handleUploadImage = async (roomId, file) => {
   //   try {
   //     const formData = new FormData();
@@ -123,6 +124,9 @@ export default function RoomList() {
   //     console.error(error);
   //   }
   // };
+
+
+  
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -186,6 +190,7 @@ export default function RoomList() {
               "Cập nhật phòng thành công nhưng upload ảnh thất bại"
             );
           }
+
         }
 
         toast.success("Cập nhật phòng thành công!");
@@ -193,6 +198,7 @@ export default function RoomList() {
         // Thêm phòng
         const created = await addroomService(payload);
         roomResult = created.content;
+
 
         // Upload ảnh nếu có
         if (selectedFile) {
@@ -205,6 +211,7 @@ export default function RoomList() {
             console.warn("Lỗi upload ảnh:", uploadErr);
             toast.warning("Thêm phòng thành công nhưng upload ảnh thất bại");
           }
+
         }
 
         toast.success("Thêm phòng thành công!");
@@ -282,7 +289,7 @@ export default function RoomList() {
 
   // filteredRoom, totalPages, startIndex, currentRooms, changePage (giữ nguyên)
   const filteredRoom = rooms.filter((room) =>
-    room.tenPhong?.toLowerCase().includes(searchRoom.toLowerCase())
+    room?.tenPhong?.toLowerCase().includes(searchRoom.toLowerCase())
   );
   const totalPages = Math.ceil(filteredRoom.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -567,7 +574,6 @@ export default function RoomList() {
                   <td className="roomlist-td">
                     {room.hinhAnh ? (
                       <img
-                        key={room.hinhAnh}
                         src={room.hinhAnh}
                         alt={room.tenPhong || "Hình ảnh phòng"}
                         width="80"

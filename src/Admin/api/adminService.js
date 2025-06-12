@@ -48,6 +48,7 @@ export const getAdminService = () => {
 //   });
 // };
 
+
 // export const uploadRoomImage = (roomId, file) => {
 //   const formData = new FormData();
 //   formData.append("formFile", file);
@@ -63,6 +64,7 @@ export const getAdminService = () => {
 //     }
 //   );
 // };
+
 
 // export const getAdminServices = {
 //   getRoomListPagination: (pageIndex = 1, pageSize = 10, keyword = "") => {

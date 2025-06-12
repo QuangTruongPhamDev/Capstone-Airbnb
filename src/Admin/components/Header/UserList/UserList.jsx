@@ -5,7 +5,6 @@ import {
     getUserService,
     updateUserService,
 } from "../../../api/userService";
-import { UploadAvatarUserService } from "../../../api/userService"; // Import service mới
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -19,9 +18,6 @@ export default function UserList() {
     const [totalPages, setTotalPages] = useState(1);
     const [showAddAdminModal, setShowAddAdminModal] = useState(false);
     const [editingUser, setEditingUser] = useState(null);
-    const [selectedAvatarFile, setSelectedAvatarFile] = useState(null); // New state for selected avatar file
-    const [avatarPreview, setAvatarPreview] = useState(null); // New state for avatar preview
-
     const itemsPerPage = 100;
 
     const [adminForm, setAdminForm] = useState({
@@ -31,7 +27,6 @@ export default function UserList() {
         phone: "",
         password: "",
         role: "ADMIN",
-        avatar: "", // Add avatar field to form state to store current avatar URL
     });
 
     useEffect(() => {
@@ -56,116 +51,37 @@ export default function UserList() {
     };
 
     // New function to handle avatar file selection and preview
-    const handleUploadAvatar = async (file, userId) => {
-        if (!file) {
-            toast.warning("Vui lòng chọn file hình ảnh!");
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append("formFile", file);
-
+    const handleAddAdmin = async (e) => {
+        e.preventDefault();
+    
+        const userPayload = {
+            ...adminForm,
+            role: adminForm.role || "ADMIN",
+        };
+        delete userPayload.avatar;
+    
         try {
-            const res = await axios.post(
-                "https://airbnbnew.cybersoft.edu.vn/api/users/upload-avatar",
-                formData,
+            const token = localStorage.getItem("token");
+    
+            // 1. Tạo tài khoản admin mới
+            const addRes = await axios.post(
+                "https://airbnbnew.cybersoft.edu.vn/api/users",
+                userPayload,
                 {
                     headers: {
-                        token: localStorage.getItem("token"), // hoặc truyền props.token nếu cần
                         tokenCybersoft: CYBER_TOKERN,
+                        token: token,
                     },
                 }
             );
-
-            const avatarUrl = res.data.content.avatar;
-
-            // Cập nhật avatar mới cho người dùng
-            toast.success("Upload avatar thành công!");
-            // Sau đây là option: reload lại danh sách người dùng nếu cần
-            fetchUsers(); // gọi lại API lấy danh sách người dùng
-        } catch (error) {
-            console.error(error);
-            toast.error("Upload avatar thất bại!");
-        }
-    };
-    const handleAddAdmin = async (e) => {
-        e.preventDefault();
-        const userPayload = {
-            ...adminForm,
-            role: adminForm.role, // Giữ nguyên role từ form, có thể là ADMIN hoặc USER
-        };
-        // Remove avatar field from the payload if it's just the URL, as we handle file separately
-        delete userPayload.avatar;
-
-        try {
-            let updatedUserData; // Variable to store the updated/added user data
-
-            if (editingUser) {
-                // Update user information (excluding avatar)
-                const updateRes = await updateUserService(editingUser.id, userPayload);
-                updatedUserData = updateRes.data?.content || updateRes.data || { ...userPayload, id: editingUser.id };
-
-                // If a new avatar file is selected, upload it
-                if (selectedAvatarFile) {
-                    try {
-                        // The UploadAvatarUserService function already handles FormData
-                        const uploadRes = await UploadAvatarUserService(selectedAvatarFile);
-                        // Assuming the upload service returns the updated user object with new avatar URL
-                        const newAvatarUrl = uploadRes.data?.content?.avatar || uploadRes.data?.avatar || uploadRes.data; // Adjust based on your API response
-
-                        if (newAvatarUrl) {
-                            updatedUserData = { ...updatedUserData, avatar: newAvatarUrl };
-                            toast.success("Cập nhật avatar thành công!");
-                        } else {
-                            console.warn("Upload avatar success, but no new avatar URL found in response:", uploadRes);
-                        }
-                    } catch (uploadError) {
-                        toast.error("Tải avatar thất bại!");
-                        console.error("Lỗi khi tải avatar:", uploadError.response?.data || uploadError.message);
-                    }
-                }
-                toast.success("Cập nhật người dùng thành công!");
-            } else {
-                const token = localStorage.getItem("token");
-                const addRes = await axios.post(
-                    "https://airbnbnew.cybersoft.edu.vn/api/users",
-                    userPayload,
-                    {
-                        headers: {
-                            tokenCybersoft: CYBER_TOKERN,
-                            token: token,
-                        },
-                    }
-                );
-                updatedUserData = addRes.data?.content || addRes.data;
-
-                // 2. Nếu có avatar, upload ngay sau khi tạo xong user
-                if (selectedAvatarFile) {
-                    try {
-                        const uploadRes = await UploadAvatarUserService(selectedAvatarFile);
-                        const newAvatarUrl = uploadRes.data?.content?.avatar || uploadRes.data?.avatar || uploadRes.data;
-                
-                        if (newAvatarUrl) {
-                            updatedUserData = { ...updatedUserData, avatar: newAvatarUrl };
-                            toast.success("Cập nhật avatar thành công!");
-                
-                            // Cập nhật avatar mới trong form để UI hiển thị ngay
-                            setAdminForm(prev => ({ ...prev, avatar: newAvatarUrl }));
-                
-                            // Cập nhật userList luôn cho chắc
-                            setUserList(prevList =>
-                                prevList.map(u =>
-                                    u.id === updatedUserData.id ? { ...u, avatar: newAvatarUrl } : u
-                                )
-                            );
-                        }
-                    } catch (uploadError) {
-                        toast.error("Tải avatar thất bại!");
-                    }
-                }
-                toast.success("Thêm người dùng thành công!");
-            }
-
+    
+            let newUser = addRes.data?.content || addRes.data;
+    
+            // 3. Cập nhật UI
+            setUserList(prev => [newUser, ...prev]);
+            toast.success("Thêm admin thành công!");
+    
+            // 4. Reset form
             setShowAddAdminModal(false);
             setAdminForm({
                 name: "",
@@ -177,11 +93,9 @@ export default function UserList() {
                 avatar: "",
             });
             setEditingUser(null);
-            setSelectedAvatarFile(null); // Reset file state
-            setAvatarPreview(null); // Reset preview state
         } catch (error) {
-            toast.error(error.response?.data?.content || error.message || "Thêm/cập nhật người dùng thất bại!");
-            console.error("Lỗi khi thêm/cập nhật người dùng:", error.response?.data || error.message);
+            toast.error(error.response?.data?.content || "Thêm admin thất bại!");
+            console.error("Lỗi thêm admin:", error.response?.data || error.message);
         }
     };
 
@@ -207,12 +121,9 @@ export default function UserList() {
             phone: user.phone || "",
             password: "", // Mật khẩu thường không được điền vào form edit vì lý do bảo mật
             role: user.role || "USER", // Mặc định là USER nếu không có
-            avatar: user.avatar || "", // Set current avatar URL for display
         });
         setEditingUser(user);
         setShowAddAdminModal(true);
-        setSelectedAvatarFile(null); // Clear selected file when opening edit modal
-        setAvatarPreview(user.avatar || null); // Show current avatar as preview
     };
 
     const changePage = (newPage) => {
@@ -282,7 +193,6 @@ export default function UserList() {
                             <th>Mã người dùng</th>
                             <th>Họ tên</th>
                             <th>Email</th>
-                            <th>Avatar</th>
                             <th>Quyền</th>
                             <th>Hành động</th>
                         </tr>
@@ -294,20 +204,6 @@ export default function UserList() {
                                     <td>{user.id}</td>
                                     <td>{user.name}</td>
                                     <td>{user.email}</td>
-                                    <td>
-                                        {user.avatar ? (
-                                            <img
-                                                src={user.avatar}
-                                                alt="Avatar"
-                                                width="50"
-                                                height="50"
-                                                style={{ borderRadius: "50%", objectFit: "cover" }}
-                                                onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/50"; }}
-                                            />
-                                        ) : (
-                                            "N/A"
-                                        )}
-                                    </td>
                                     <td>{user.role}</td>
                                     <td>
                                         <button
@@ -414,38 +310,6 @@ export default function UserList() {
                                 onChange={handleChange}
                                 required={!editingUser} // Mật khẩu bắt buộc khi thêm mới, không khi cập nhật
                             />
-
-                            {/* Input file cho avatar */}
-                            <div className="flex flex-col gap-2">
-                                <label htmlFor="avatarFile" className="font-semibold">
-                                    Ảnh đại diện:
-                                </label>
-                                <input
-                                    type="file"
-                                    id="avatarFile"
-                                    className="w-full p-2 border rounded"
-                                    accept="image/png, image/jpeg, image/jpg"
-                                    onChange={(e) => {
-                                        const file = e.target.files[0];
-                                        if (file) {
-                                            setSelectedAvatarFile(file);
-                                            setAvatarPreview(URL.createObjectURL(file));
-                                        }
-                                    }}
-                                />
-                                {avatarPreview && (
-                                    <div className="mt-2">
-                                        <img src={avatarPreview} alt="Preview Avatar" className="w-24 h-24 object-cover rounded-full mx-auto" />
-                                    </div>
-                                )}
-                                {adminForm.avatar && !selectedAvatarFile && (
-                                    <div className="mt-2 text-center text-gray-500 text-sm">
-                                        Ảnh đại diện hiện tại:
-                                        <img src={adminForm.avatar} alt="Current Avatar" className="w-20 h-20 object-cover rounded-full mx-auto" />
-                                    </div>
-                                )}
-                            </div>
-
                             <div className="flex justify-end gap-2">
                                 <button
                                     type="submit"
