@@ -18,15 +18,14 @@ export default function RegisterPage() {
         email: values.email,
         password: values.password,
         phone: values.phone,
-        birthday: values.birthday.format("YYYY-MM-DD"), // convert DatePicker
-        gender: values.gender === "male", // boolean
-        role: values.role,
+        birthday: values.birthday.format("YYYY-MM-DD"),
+        gender: values.gender === "male",
+        role: "USER", // Mặc định là USER
       };
 
       const res = await registerService(payload);
       toast.success("Đăng ký thành công!");
 
-      // Lưu email/password để auto-fill khi sang login
       const tempLoginInfo = {
         email: values.email,
         password: values.password,
@@ -52,11 +51,9 @@ export default function RegisterPage() {
         backgroundImage: "url('/images/image_register.png')",
       }}
     >
-      {/* Lớp phủ đen mờ */}
       <div className="absolute inset-0 bg-black/40 bg-opacity-60 z-0"></div>
 
       <div className="relative z-10 max-w-lg w-full bg-white rounded-2xl shadow-xl p-8">
-        {/* Form bên trái */}
         <h2 className="text-3xl font-extrabold mb-8 text-center text-red-500">
           Đăng ký tài khoản
         </h2>
@@ -65,10 +62,7 @@ export default function RegisterPage() {
           layout="vertical"
           form={form}
           onFinish={onFinish}
-          initialValues={{
-            role: "USER",
-            gender: "male",
-          }}
+          initialValues={{ gender: "male" }}
           labelAlign="left"
           requiredMark={false}
         >
@@ -140,16 +134,7 @@ export default function RegisterPage() {
             </Radio.Group>
           </Form.Item>
 
-          <Form.Item
-            name="role"
-            label={<span className="font-semibold text-gray-700">Vai trò</span>}
-            rules={[{ required: true }]}
-          >
-            <Select>
-              <Select.Option value="USER">Người dùng</Select.Option>
-              <Select.Option value="ADMIN">Quản trị viên</Select.Option>
-            </Select>
-          </Form.Item>
+          {/* Xoá mục role ở đây */}
 
           <Form.Item>
             <Button

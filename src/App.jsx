@@ -22,6 +22,8 @@ import UserProfilePage from "./Customer/pages/Profile/UserProfilePage";
 import { useDispatch } from "react-redux";
 import { getStoredUser } from "./utils/LocalStorageHelper";
 import { setUserAction } from "./Customer/redux/userSlice";
+import ProtectedRoute from "./Customer/components/ProtectedRoute/ProtectedRoute";
+import AdminProtectedRoute from "./Customer/components/AdminProtectedRoute/AdminProtectedRoute";
 
 function App() {
   const dispatch = useDispatch();
@@ -72,23 +74,43 @@ function App() {
           />
           <Route
             path="/profile"
-            element={<Template content={<UserProfilePage />} />}
+            element={
+              <ProtectedRoute>
+                <Template content={<UserProfilePage />} />
+              </ProtectedRoute>
+            }
           />
           <Route
             path="/UserPage"
-            element={<Template_admin content={<UserPage />} />}
+            element={
+              <AdminProtectedRoute>
+                <Template_admin content={<UserPage />} />
+              </AdminProtectedRoute>
+            }
           />
           <Route
             path="/LocationPage"
-            element={<Template_admin content={<LocationPage />} />}
+            element={
+              <AdminProtectedRoute>
+                <Template_admin content={<LocationPage />} />
+              </AdminProtectedRoute>
+            }
           />
           <Route
             path="/AdminPage"
-            element={<Template_admin content={<AdminPage />} />}
+            element={
+              <AdminProtectedRoute>
+                <Template_admin content={<AdminPage />} />
+              </AdminProtectedRoute>
+            }
           />
           <Route
             path="/ReservationPage"
-            element={<Template_admin content={<ReservationPage />} />}
+            element={
+              <AdminProtectedRoute>
+                <Template_admin content={<ReservationPage />} />
+              </AdminProtectedRoute>
+            }
           />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

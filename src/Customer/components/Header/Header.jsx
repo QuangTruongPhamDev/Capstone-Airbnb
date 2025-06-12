@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { logOutAction } from "../../redux/userSlice";
 import { Menu, X } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAirbnb } from "@fortawesome/free-brands-svg-icons";
+import { q } from "framer-motion/client";
 
 const menuItems = [
   { label: "Home", id: "home" },
@@ -17,6 +18,7 @@ const menuItems = [
 export default function Header({ forceWhite = false }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
   const { user } = useSelector((state) => state.userSlice);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -82,7 +84,7 @@ export default function Header({ forceWhite = false }) {
   const currentMenuHoverColor =
     isScrolled || isAlwaysWhite
       ? "hover:text-red-500"
-      : "hover:text-white hover:bg-white hover:bg-opacity-10";
+      : "hover:text-red-600 hover:bg-white hover:bg-opacity-10";
 
   const siteName = "airbnb"; // THAY THẾ TÊN TRANG WEB CỦA BẠN
   const logoIconSizeHeader = isScrolled ? "lg" : "xl";
@@ -128,7 +130,9 @@ export default function Header({ forceWhite = false }) {
         <>
           <button
             onClick={() => {
-              navigate("/dangnhap");
+              navigate("/dangnhap", {
+                state: { from: location.pathname + location.search },
+              });
               setIsUserDropdownOpen(false);
             }}
             className={`block text-left w-full py-2 px-3 rounded text-sm transition-colors duration-150 ${
@@ -339,7 +343,9 @@ export default function Header({ forceWhite = false }) {
               <div className="px-3 pt-3 space-y-3">
                 <button
                   onClick={() => {
-                    navigate("/dangnhap");
+                    navigate("/dangnhap", {
+                      state: { from: location.pathname + location.search },
+                    });
                     setIsMobileMenuOpen(false);
                   }}
                   className="w-full text-center bg-red-500 text-white px-4 py-2.5 rounded-md hover:bg-red-600 transition-colors text-base font-medium"
