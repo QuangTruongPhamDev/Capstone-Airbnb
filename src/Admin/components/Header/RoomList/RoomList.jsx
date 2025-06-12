@@ -64,8 +64,6 @@ export default function RoomList() {
 
   const itemsPerPage = 10;
 
-
-
   const fetchRooms = useCallback(() => {
     setLoading(true);
     setError(null);
@@ -82,23 +80,54 @@ export default function RoomList() {
     fetchRooms();
   }, [fetchRooms]);
 
-
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setSelectedFile(file);
-      // Tạo preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-    } else {
+    const file = e.target.files?.[0];
+
+    if (!file) {
       setSelectedFile(null);
       setImagePreview(null);
+      setError("Vui lòng chọn ảnh!");
+      return;
     }
+
+    const validTypes = ["image/jpeg", "image/png", "image/jpg"];
+    if (!validTypes.includes(file.type)) {
+      setSelectedFile(null);
+      setImagePreview(null);
+      setError(
+        `File không hợp lệ (${file.type}). Chỉ chấp nhận JPG, JPEG hoặc PNG`
+      );
+      return;
+    }
+
+    setSelectedFile(file);
+    setError("");
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
   };
+
+
+  // const handleUploadImage = async (roomId, file) => {
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("formFile", file);
+
+  //     await uploadRoomImageService(roomId, formData);
+  //     toast.success("Tải ảnh lên thành công!");
+  //     fetchRooms();
+  //   } catch (error) {
+  //     toast.error("Tải ảnh lên thất bại!");
+  //     console.error(error);
+  //   }
+  // };
+
+
   
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     let processedValue = value;
@@ -117,52 +146,82 @@ export default function RoomList() {
     setError(null);
     setSuccessMessage(null);
 
-    const payload = {
-      ...form,
-      khach: parseInt(form.khach, 10) || 0,
-      phongNgu: parseInt(form.phongNgu, 10) || 0,
-      giuong: parseInt(form.giuong, 10) || 0,
-      phongTam: parseInt(form.phongTam, 10) || 0,
-      giaTien: parseInt(form.giaTien, 10) || 0,
-    };
-    delete payload.hinhAnh;
+    console.log("🧪 Kiểm tra định dạng file:", selectedFile?.type);
+
+    if (
+      selectedFile &&
+      !["image/jpeg", "image/png", "image/jpg"].includes(selectedFile.type)
+    ) {
+      setError(
+        `File không hợp lệ (${selectedFile.type}). Chỉ chấp nhận JPG, JPEG hoặc PNG`
+      );
+      setLoading(false);
+      return;
+    }
 
     try {
-      let roomData;
-      if (isEditing && editingRoomId !== null) {
-        const res = await updateRoomService(editingRoomId, payload);
-        roomData = res.data?.content || { ...form, id: editingRoomId };
+      const payload = {
+        ...form,
+        khach: parseInt(form.khach, 10),
+        phongNgu: parseInt(form.phongNgu, 10),
+        giuong: parseInt(form.giuong, 10),
+        phongTam: parseInt(form.phongTam, 10),
+        giaTien: parseInt(form.giaTien, 10),
+      };
+      delete payload.hinhAnh;
 
+      let roomResult;
+
+      if (isEditing) {
+        // Cập nhật phòng
+        const updated = await updateRoomService(editingRoomId, payload);
+        roomResult = updated;
+
+        // Upload ảnh nếu có
         if (selectedFile) {
-          const uploadRes = await uploadRoomImageService(editingRoomId, selectedFile);
-          roomData.hinhAnh = uploadRes.hinhAnh || roomData.hinhAnh;
-          toast.success("Cập nhật ảnh thành công!");
+          const formData = new FormData();
+          formData.append("formFile", selectedFile);
+          try {
+            await uploadRoomImageService(editingRoomId, formData);
+            toast.success("Cập nhật ảnh thành công");
+          } catch (uploadErr) {
+            console.error("Lỗi upload ảnh:", uploadErr);
+            toast.warning(
+              "Cập nhật phòng thành công nhưng upload ảnh thất bại"
+            );
+          }
+
         }
 
-        setRooms((prev) =>
-          prev.map((r) => (r.id === editingRoomId ? roomData : r))
-        );
-        setSuccessMessage("Cập nhật phòng thành công!");
+        toast.success("Cập nhật phòng thành công!");
       } else {
-        const res = await addroomService(payload);
-        roomData = res.data?.content;
+        // Thêm phòng
+        const created = await addroomService(payload);
+        roomResult = created.content;
 
-        if (selectedFile && roomData?.id) {
-          const uploadRes = await uploadRoomImageService(roomData.id, selectedFile);
-          console.log("Upload response:", uploadRes);
-          roomData.hinhAnh = uploadRes.hinhAnh || roomData.hinhAnh;
-          toast.success("Tải ảnh phòng thành công!");
+
+        // Upload ảnh nếu có
+        if (selectedFile) {
+          const formData = new FormData();
+          formData.append("formFile", selectedFile);
+          try {
+            await uploadRoomImageService(roomResult.id, formData);
+            toast.success("Upload ảnh thành công");
+          } catch (uploadErr) {
+            console.warn("Lỗi upload ảnh:", uploadErr);
+            toast.warning("Thêm phòng thành công nhưng upload ảnh thất bại");
+          }
+
         }
 
-        setRooms((prev) => [...prev, roomData]);
-        setSuccessMessage("Thêm phòng thành công!");
+        toast.success("Thêm phòng thành công!");
       }
 
-      fetchRooms();
+      await fetchRooms();
       resetFormAndFile();
-    } catch (err) {
-      console.error("Lỗi khi submit:", err);
-      setError(err.message || "Đã xảy ra lỗi.");
+    } catch (error) {
+      console.error("Lỗi chính:", error);
+      toast.error(error.message || "Có lỗi xảy ra.");
     } finally {
       setLoading(false);
     }
@@ -261,7 +320,9 @@ export default function RoomList() {
           <h1 className="roomlist-h1">Quản lý Phòng</h1>
           <div className="roomlist-logout">
             <Link to="/">
-              <span><i className="roomlist-home fa fa-home"></i></span>
+              <span>
+                <i className="roomlist-home fa fa-home"></i>
+              </span>
             </Link>
           </div>
         </div>
@@ -423,7 +484,7 @@ export default function RoomList() {
               <input
                 type="file"
                 id="hinhAnhFile"
-                value={form.hinhAnh}
+                // value={form.hinhAnh}
                 className="roomlist-input-file"
                 accept="image/png, image/jpeg, image/jpg"
                 onChange={handleFileChange}
@@ -472,8 +533,8 @@ export default function RoomList() {
                 {loading
                   ? "Đang xử lý..."
                   : isEditing
-                    ? "Cập nhật"
-                    : "Thêm mới"}
+                  ? "Cập nhật"
+                  : "Thêm mới"}
               </button>
               <button
                 type="button"
@@ -556,7 +617,6 @@ export default function RoomList() {
             <button
               onClick={() => changePage(currentPage - 1)}
               className="roomlist-button"
-
             >
               «
             </button>
@@ -564,8 +624,9 @@ export default function RoomList() {
               <button
                 key={i}
                 onClick={() => changePage(i + 1)}
-                className={`roomlist-button ${currentPage === i + 1 ? "active" : ""
-                  }`}
+                className={`roomlist-button ${
+                  currentPage === i + 1 ? "active" : ""
+                }`}
               >
                 {i + 1}
               </button>
@@ -573,7 +634,6 @@ export default function RoomList() {
             <button
               onClick={() => changePage(currentPage + 1)}
               className="roomlist-button"
-
             >
               »
             </button>

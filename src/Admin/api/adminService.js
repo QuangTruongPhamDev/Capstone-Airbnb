@@ -48,18 +48,23 @@ export const getAdminService = () => {
 //   });
 // };
 
-export const uploadRoomImage = (roomId, formData) => {
-  return axios.post(
-    `${API_URL}/upload-hinh-phong?maPhong=${roomId}`,
-    formData,
-    {
-      headers: {
-        tokenCybersoft: CYBER_TOKERN,
-        token: token,
-      },
-    }
-  );
-};
+
+// export const uploadRoomImage = (roomId, file) => {
+//   const formData = new FormData();
+//   formData.append("formFile", file);
+
+//   return axios.post(
+//     `${API_URL}/upload-hinh-phong?maPhong=${roomId}`,
+//     formData,
+//     {
+//       headers: {
+//         tokenCybersoft: CYBER_TOKERN,
+//         token: token,
+//       },
+//     }
+//   );
+// };
+
 
 // export const getAdminServices = {
 //   getRoomListPagination: (pageIndex = 1, pageSize = 10, keyword = "") => {
@@ -79,25 +84,22 @@ export const uploadRoomImage = (roomId, formData) => {
 export const addroomService = async (form) => {
   const token = getUserToken();
   if (!token) {
-    return Promise.reject({
-      message: "Bạn cần đăng nhập để thực hiện hành động này.",
-      type: "AUTH_ERROR",
-    });
+    throw new Error("Bạn cần đăng nhập");
   }
+
   try {
     const response = await axios.post(API_URL, form, {
-      headers: { tokenCybersoft: CYBER_TOKERN, token: token },
+      headers: {
+        tokenCybersoft: CYBER_TOKERN,
+        token: token,
+      },
     });
-    return response.data.content;
+
+    console.log("Add Room Response:", response.data);
+    return response.data;
   } catch (err) {
-    console.error(
-      "Lỗi khi thêm phòng (service):",
-      err.response?.data || err.message
-    );
-    throw (
-      err.response?.data ||
-      new Error(err.response?.data?.message || "Lỗi khi thêm phòng.")
-    );
+    console.error("Lỗi thêm phòng:", err.response?.data || err.message);
+    throw err.response?.data || new Error("Lỗi khi thêm phòng");
   }
 };
 
@@ -113,7 +115,18 @@ export const updateRoomService = async (id, form) => {
     const response = await axios.put(`${API_URL}/${id}`, form, {
       headers: { tokenCybersoft: CYBER_TOKERN, token: token },
     });
-    return response.data.content || { ...form, id };
+
+    // Nếu API không trả lại data, tự cấu hình object trả về từ `form`
+    if (response.data.content) {
+      return response.data.content;
+    } else {
+      // Tự build lại object từ form nếu là FormData
+      const result = { id };
+      for (let [key, value] of form.entries()) {
+        result[key] = value;
+      }
+      return result;
+    }
   } catch (err) {
     console.error(
       "Lỗi khi cập nhật phòng (service):",
@@ -159,44 +172,43 @@ export const deleteRoomService = async (id) => {
  */
 export const uploadRoomImageService = async (roomId, file) => {
   const token = getUserToken();
-  if (!token) {
-    console.error("uploadRoomImageService: Token không hợp lệ.");
-    return Promise.reject({
-      message: "Bạn cần đăng nhập để upload ảnh.",
-      type: "AUTH_ERROR",
-    });
+  if (!token) throw new Error("Bạn cần đăng nhập để upload ảnh");
+
+  const validTypes = ["image/jpeg", "image/png", "image/jpg"];
+  console.log("File được chọn:", file);
+  console.log("Loại file:", file.type);
+
+  if (!validTypes.includes(file.type)) {
+    throw new Error(`File không hợp lệ (${file.type}). Chỉ chấp nhận JPG/PNG`);
   }
 
   const formData = new FormData();
-  // API Swagger ghi maPhong là (query), nhưng service gốc gửi trong FormData.
-  // Nhiều API chấp nhận cả hai. Giữ nguyên gửi trong FormData vì nó phổ biến.
-  formData.append("maPhong", roomId.toString()); // Đảm bảo roomId là string nếu API yêu cầu
-  formData.append("formFile", file);
+  formData.append("formFile", file); // <-- kiểm tra lại nếu backend yêu cầu key khác
 
   try {
     const response = await axios.post(
-      `${API_URL}/upload-hinh-phong`,
+      `${API_URL}/upload-hinh-phong?maPhong=${roomId}`,
       formData,
       {
         headers: {
           tokenCybersoft: CYBER_TOKERN,
           token: token,
-          // "Content-Type": "multipart/form-data", // Axios sẽ tự động đặt khi data là FormData
         },
+        timeout: 10000,
       }
     );
-    // Giả sử API trả về thông tin phòng đã cập nhật hình ảnh
-    return response.data.content;
+
+    if (!response.data) {
+      throw new Error("Không nhận được phản hồi từ server");
+    }
+
+    return response.data;
   } catch (error) {
-    console.error(
-      "Lỗi upload hình ảnh phòng (service):",
-      error.response?.data || error.message
-    );
-    throw (
-      error.response?.data ||
-      new Error(
-        error.response?.data?.message || "Lỗi khi upload hình ảnh phòng."
-      )
-    );
+    console.error("Chi tiết lỗi upload:", {
+      status: error.response?.status,
+      data: error.response?.data,
+      config: error.config,
+    });
+    throw new Error(error.response?.data?.message || "Lỗi khi upload ảnh");
   }
 };
