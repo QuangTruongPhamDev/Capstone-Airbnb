@@ -34,7 +34,7 @@ export default function VideoBanner() {
         muted
         playsInline
         className="absolute top-0 left-0 w-full h-full object-cover z-0"
-        poster="/images/default-poster.jpg" // THAY THẾ ảnh poster
+        poster="/images/poster-video.jpg" // THAY THẾ ảnh poster
       >
         {/* THAY THẾ bằng đường dẫn đến video của bạn trong thư mục public */}
         {/* Nếu BannerVideo là biến import: src={BannerVideo} */}
