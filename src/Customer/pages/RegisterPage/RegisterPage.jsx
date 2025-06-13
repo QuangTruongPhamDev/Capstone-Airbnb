@@ -41,7 +41,13 @@ export default function RegisterPage() {
   };
 
   useEffect(() => {
+    const previousTitle = document.title; // Lưu lại tiêu đề hiện tại
+
     document.title = "Đăng ký tài khoản";
+
+    return () => {
+      document.title = previousTitle; // Khôi phục khi component unmount
+    };
   }, []);
 
   return (
