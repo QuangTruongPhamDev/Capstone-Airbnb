@@ -110,7 +110,6 @@ export default function RoomList() {
     reader.readAsDataURL(file);
   };
 
-
   // const handleUploadImage = async (roomId, file) => {
   //   try {
   //     const formData = new FormData();
@@ -124,9 +123,6 @@ export default function RoomList() {
   //     console.error(error);
   //   }
   // };
-
-
-
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -190,7 +186,6 @@ export default function RoomList() {
               "Cập nhật phòng thành công nhưng upload ảnh thất bại"
             );
           }
-
         }
 
         toast.success("Cập nhật phòng thành công!");
@@ -198,7 +193,6 @@ export default function RoomList() {
         // Thêm phòng
         const created = await addroomService(payload);
         roomResult = created.content;
-
 
         // Upload ảnh nếu có
         if (selectedFile) {
@@ -211,7 +205,6 @@ export default function RoomList() {
             console.warn("Lỗi upload ảnh:", uploadErr);
             toast.warning("Thêm phòng thành công nhưng upload ảnh thất bại");
           }
-
         }
 
         toast.success("Thêm phòng thành công!");
@@ -241,16 +234,14 @@ export default function RoomList() {
   const handleDelete = async (id) => {
     if (window.confirm("Bạn có chắc muốn xóa phòng này không?")) {
       setLoading(true);
-      setError(null);
-      setSuccessMessage(null);
       try {
         await deleteRoomService(id);
         setRooms((prevRooms) => prevRooms.filter((room) => room.id !== id));
-        setSuccessMessage("Xóa phòng thành công!");
+        toast.success("Xóa phòng thành công!");
         fetchRooms();
       } catch (err) {
         console.error("Lỗi khi xóa phòng (component):", err);
-        setError(err.message || "Lỗi khi xóa phòng.");
+        toast.error(err.message || "Lỗi khi xóa phòng.");
       } finally {
         setLoading(false);
       }
@@ -533,8 +524,8 @@ export default function RoomList() {
                 {loading
                   ? "Đang xử lý..."
                   : isEditing
-                    ? "Cập nhật"
-                    : "Thêm mới"}
+                  ? "Cập nhật"
+                  : "Thêm mới"}
               </button>
               <button
                 type="button"
@@ -624,8 +615,9 @@ export default function RoomList() {
               <button
                 key={i}
                 onClick={() => changePage(i + 1)}
-                className={`roomlist-button ${currentPage === i + 1 ? "active" : ""
-                  }`}
+                className={`roomlist-button ${
+                  currentPage === i + 1 ? "active" : ""
+                }`}
               >
                 {i + 1}
               </button>
