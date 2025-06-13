@@ -3,12 +3,13 @@ import "./index.css";
 import { Link, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logOutAction } from "../../../../Customer/redux/userSlice";
 
 export default function Sidebar() {
   const location = useLocation();
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.userSlice);
   const pathname = location.pathname;
   const navigate = useNavigate();
 
@@ -62,9 +63,15 @@ export default function Sidebar() {
             </li>
           </Link>
           <div className="sidebar-logout">
-            <div className="sidebar-avatar">A</div>
-            <button onClick={handleLogout} className="btn btn-danger">
-              <span className="sidebar-span-1">Đăng xuất</span>
+            <div className="sidebar-avatar">
+              <img
+                src={user?.avatar || "/default-avatar.png"}
+                alt="avatar"
+                className="sidebar-avatar-img"
+              />
+            </div>
+            <button onClick={handleLogout} className="logout-button-text">
+              <span>Đăng xuất</span>
             </button>
           </div>
         </ul>
