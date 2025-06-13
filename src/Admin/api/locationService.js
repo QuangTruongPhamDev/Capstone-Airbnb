@@ -1,5 +1,5 @@
 import axios from "axios";
-import { https, CYBER_TOKERN } from "./config";
+import { CYBER_TOKERN } from "./config";
 
 // export const getLocationService = () => {
 //     return https.get("https://airbnbnew.cybersoft.edu.vn/api/vi-tri");

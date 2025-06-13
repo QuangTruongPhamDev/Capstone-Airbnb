@@ -7,7 +7,7 @@ import {
   updateRoomService,
   uploadRoomImageService,
 } from "../../../api/adminService";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import { Link } from "react-router-dom";
 
 // Component AlertMessage (để hiển thị thông báo)
@@ -126,7 +126,7 @@ export default function RoomList() {
   // };
 
 
-  
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -179,10 +179,10 @@ export default function RoomList() {
 
         // Upload ảnh nếu có
         if (selectedFile) {
-          const formData = new FormData();
-          formData.append("formFile", selectedFile);
+          // const formData = new FormData();
+          // formData.append("formFile", selectedFile);
           try {
-            await uploadRoomImageService(editingRoomId, formData);
+            await uploadRoomImageService(editingRoomId, selectedFile);
             toast.success("Cập nhật ảnh thành công");
           } catch (uploadErr) {
             console.error("Lỗi upload ảnh:", uploadErr);
@@ -202,10 +202,10 @@ export default function RoomList() {
 
         // Upload ảnh nếu có
         if (selectedFile) {
-          const formData = new FormData();
-          formData.append("formFile", selectedFile);
+          // const formData = new FormData();
+          // formData.append("formFile", selectedFile);
           try {
-            await uploadRoomImageService(roomResult.id, formData);
+            await uploadRoomImageService(roomResult.id, selectedFile);
             toast.success("Upload ảnh thành công");
           } catch (uploadErr) {
             console.warn("Lỗi upload ảnh:", uploadErr);
@@ -533,8 +533,8 @@ export default function RoomList() {
                 {loading
                   ? "Đang xử lý..."
                   : isEditing
-                  ? "Cập nhật"
-                  : "Thêm mới"}
+                    ? "Cập nhật"
+                    : "Thêm mới"}
               </button>
               <button
                 type="button"
@@ -624,9 +624,8 @@ export default function RoomList() {
               <button
                 key={i}
                 onClick={() => changePage(i + 1)}
-                className={`roomlist-button ${
-                  currentPage === i + 1 ? "active" : ""
-                }`}
+                className={`roomlist-button ${currentPage === i + 1 ? "active" : ""
+                  }`}
               >
                 {i + 1}
               </button>
@@ -640,6 +639,7 @@ export default function RoomList() {
           </div>
         )}
       </div>
+      <ToastContainer position="top-right" autoClose={2000} />
     </div>
   );
 }

@@ -3,7 +3,6 @@ import "./index.css";
 import {
     deleteUserService,
     getUserService,
-    updateUserService,
 } from "../../../api/userService";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";

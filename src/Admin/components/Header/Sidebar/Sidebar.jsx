@@ -3,7 +3,6 @@ import "./index.css";
 import { Link, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { CYBER_TOKERN } from '../../../api/config';
 
 export default function Sidebar() {
     const location = useLocation();
