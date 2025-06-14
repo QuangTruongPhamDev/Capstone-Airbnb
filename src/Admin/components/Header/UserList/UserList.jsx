@@ -16,6 +16,7 @@ export default function UserList() {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [showAddAdminModal, setShowAddAdminModal] = useState(false);
+    const [selectedAvatarFile, setSelectedAvatarFile] = useState(null);
     const [editingUser, setEditingUser] = useState(null);
     const itemsPerPage = 100;
 
